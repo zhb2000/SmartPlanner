@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/todo_page_refresh"
+        android:title="@string/refresh"/>
+    <item android:id="@+id/todo_page_add_many"
+        android:title="插入50条数据"/>
+    <item android:id="@+id/todo_page_delete_all_todo"
+        android:title="删除所有todo数据"/>
+</menu>

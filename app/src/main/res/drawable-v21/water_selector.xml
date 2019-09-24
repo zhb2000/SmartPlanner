@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--API21以上的点击波纹动画-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#c1c1c2">
+    <item>
+        <shape>
+            <corners android:radius="1dp" />
+            <solid android:color="#ffffff" />
+        </shape>
+    </item>
+</ripple>

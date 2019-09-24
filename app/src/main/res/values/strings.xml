@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">SmartPlanner</string>
+    <string name="nav_home">主页</string>
+    <string name="nav_statistic">统计</string>
+    <string name="nav_tomato">番茄钟</string>
+    <string name="nav_calendar">日历</string>
+    <string name="nav_setting">设置</string>
+    <string name="nav_about">关于</string>
+    <string name="undo">撤销</string>
+    <string name="title_activity_setting">设置</string>
+    <string name="today">今天</string>
+    <string name="yesterday">昨天</string>
+    <string name="tomorrow">明天</string>
+    <string name="add_todo_note">添加备注</string>
+    <string name="add_todo_title">待办事项标题</string>
+    <string name="add_todo_tag">添加标签</string>
+    <string name="refresh">刷新</string>
+    <string name="delete">删除</string>
+    <string name="view_detail">查看详情</string>
+    <string name="todo">待办</string>
+    <string name="advice">建议</string>
+    <string name="habit">习惯</string>
+    <string name="select_todo_alarm_time">选择提醒时间</string>
+    <string name="select_todo_date">选择日期</string>
+
+</resources>
