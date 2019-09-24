@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="68dp"
+    android:orientation="horizontal"
+    android:background="@drawable/water_selector">
+
+    <!--完成任务复选框-->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/todo_item_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_gravity="center_vertical"
+        android:theme="@style/completeCheckboxTheme"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <!--标题-->
+        <TextView
+            android:id="@+id/todo_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:singleLine="true"
+            android:ellipsize="end"/>
+
+        <LinearLayout
+            android:id="@+id/todo_item_down_layout"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:orientation="horizontal">
+
+            <!--日期图标-->
+            <ImageView
+                android:id="@+id/todo_item_date_icon"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:src="@mipmap/ic_calendar_today_black"
+                android:tint="@color/blue"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_vertical"/>
+            <!--日期文本-->
+            <TextView
+                android:id="@+id/todo_item_date_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="@color/blue"/>
+            <!--提醒闹钟图标-->
+            <ImageView
+                android:id="@+id/todo_item_alarm_icon"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@mipmap/ic_alarm_black"
+                android:tint="@color/grey"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_vertical"/>
+            <!--备注图标-->
+            <ImageView
+                android:id="@+id/todo_item_note_icon"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:src="@mipmap/ic_note_black"
+                android:tint="@color/grey"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_vertical"/>
+            <!--备注文本-->
+            <TextView
+                android:id="@+id/todo_item_note"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@color/grey"
+                android:singleLine="true"
+                android:ellipsize="end"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--星标复选框-->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/todo_item_star"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_gravity="center_vertical"
+        style="@style/starCheckboxStyle"
+        android:theme="@style/starCheckboxStyle" />
+        <!--android:buttonTint="@color/blue"-->
+
+</LinearLayout>
