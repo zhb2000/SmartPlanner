@@ -1,6 +1,7 @@
 package com.my.smartplanner.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -97,9 +98,11 @@ public class MainActivity extends AppCompatActivity {
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //TODO 更改启动Activity的方式
                 Intent intent = new Intent(MainActivity.this, TodoDetailActivity.class);
                 intent.putExtra("mode", TodoDetailActivity.CREATE_MODE);
-                startActivity(intent);
+                //startActivity(intent);
+                startActivityForResult(intent,2);
             }
         });
         /*addFab.setOnClickListener(new View.OnClickListener() {
@@ -128,8 +131,8 @@ public class MainActivity extends AppCompatActivity {
         titleList.add(getString(R.string.advice));
         titleList.add(getString(R.string.todo));
         titleList.add(getString(R.string.habit));
-        tabLayout = (TabLayout) findViewById(R.id.home_tab);
-        viewPager = (ViewPager) findViewById(R.id.home_view_pager_content);
+        tabLayout = findViewById(R.id.home_tab);
+        viewPager = findViewById(R.id.home_view_pager_content);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments, titleList);
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(2);//修改缓存页数
@@ -171,14 +174,20 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setCheckedItem(R.id.nav_main_page);//侧滑抽屉选中
     }
 
+    /**
+     * 加载菜单
+     * */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {//加载菜单
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.todo_page_menu, menu);
         return true;
     }
 
+    /**
+     * 菜单选中事件
+     * */
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {//菜单选中事件
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
@@ -196,9 +205,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * 按下返回键
+     * */
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
             mDrawerLayout.closeDrawers();
         }else{
@@ -206,13 +217,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*刷新待办页面*/
+    /**
+     * 刷新待办页面
+     * */
     private void todoPageRefresh() {
         //TODO 刷新待办页面
         todoFragment2.refresh();
     }
 
-    /*删除所有待办数据*/
+    private void todoPageUpdateItemChange(int pos){
+        todoFragment2.updateChange(pos);
+    }
+
+    /**
+     * 删除所有待办数据
+     * */
     private void deleteALLTodo(){
         new Thread(new Runnable() {
             @Override
@@ -224,7 +243,9 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    /*添加50条待办数据*/
+    /**
+     * 添加50条待办数据
+     * */
     private void addMany() {
         new Thread(new Runnable() {
             @Override
@@ -239,4 +260,43 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK)//有变化
+        {
+            int ret_status = data.getIntExtra("return_status",0);//TODO 空指针
+            if(ret_status==1){//新增
+                todoPageRefresh();
+            }else if(ret_status == 2){//修改
+                int pos = data.getIntExtra("pos_in_adapter",0);
+                todoPageUpdateItemChange(pos);
+            }else{
+                int pos = data.getIntExtra("pos_in_adapter",0);
+                todoFragment2.removeItemUpdate(pos);//TODO 更简洁地与Fragment通信
+            }
+        }
+        /*switch (requestCode){
+            case 1:
+                if(resultCode==RESULT_OK){
+                    int ret_status = data.getIntExtra("return_status",0);
+                    if(ret_status==1){
+                        todoPageRefresh();
+                    }else{
+                        todoPageRefresh();
+                    }
+                }
+                break;
+            case 2:
+                if(resultCode==RESULT_OK){
+                    int ret_status = data.getIntExtra("return_status",0);
+                    if(ret_status==1){
+                        todoPageRefresh();
+                    }else{
+                        todoPageRefresh();
+                    }
+                }
+                break;
+        }*/
+    }
 }

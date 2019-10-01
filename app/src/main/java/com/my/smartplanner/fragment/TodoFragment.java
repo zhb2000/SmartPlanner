@@ -14,7 +14,7 @@ import com.my.smartplanner.MyLayoutAnimationHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.adapter.TodoItemAdapter;
 import com.my.smartplanner.other.TodoListItem;
-import com.my.smartplanner.util.DateUtil;
+import com.my.smartplanner.util.CalendarUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,6 +57,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         todoListRecyclerView = mRootView.findViewById(R.id.todo_list_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 
+        //动画
         AnimationSet animation = MyLayoutAnimationHelper.getAnimationSetAlpha();
         LayoutAnimationController controller = new LayoutAnimationController(animation);
         controller.setOrder(LayoutAnimationController.ORDER_NORMAL);
@@ -109,7 +110,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
                 Calendar date = null;
                 if (!cursor.isNull(cursor.getColumnIndex("date"))) {
                     String dateString = cursor.getString(cursor.getColumnIndex("date"));
-                    date = DateUtil.stringToCalendar(dateString,"yyyy-MM-dd");
+                    date = CalendarUtil.stringToCalendar(dateString,"yyyy-MM-dd");
                 }
                 TodoListItem item = new TodoListItem(id, title, isComplete, isStar, hasAlarm, note, date);
                 list.add(item);
@@ -125,6 +126,17 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         initData();
         todoItemAdapter.notifyDataSetChanged();
         todoListRecyclerView.scheduleLayoutAnimation();
+    }
+
+    public void updateChange(int pos){
+        initData();//TODO 不要全部重新加载
+        todoItemAdapter.notifyItemChanged(pos);
+        //todoListRecyclerView.scheduleLayoutAnimation();
+    }
+
+    public void removeItemUpdate(int pos){
+        initData();//TODO 不要全部重新加载
+        todoItemAdapter.notifyItemRemoved(pos);
     }
 
 }
