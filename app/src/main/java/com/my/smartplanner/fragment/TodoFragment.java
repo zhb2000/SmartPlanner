@@ -1,6 +1,7 @@
 package com.my.smartplanner.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,8 +10,9 @@ import android.view.View;
 import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,15 +39,17 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
     private RecyclerView todoListRecyclerView;
     private List<TodoListItem> list = new LinkedList<>();
 
-    private AppCompatSpinner typeSpinner;
-
+    //查询哪种类型的待办
     private static final int QUERY_TODAY = 0;
     private static final int QUERY_IMPORTANT = 1;
     private static final int QUERY_HAS_PLANNED = 2;
     private static final int QUERY_HAS_NOT_PLANNED = 3;
     private static final int QUERY_ALL = 4;
     private int queryType;
-    private boolean isFirstSelect = true;
+    private boolean isFirstSelect = true;//spinner是否是初次选中
+
+    private List<String> filterList = new ArrayList<>();//筛选列表项
+    private boolean showCompleted;//是否显示已完成待办
 
     /*public static final String ARGS_PAGE = "args_page";
     private int mPage;*/
@@ -70,9 +74,21 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         SharedPreferences sharedPreferences = mActivity.getSharedPreferences(
                 "todo_preference", Context.MODE_PRIVATE);
         queryType = sharedPreferences.getInt("select_todo_type", QUERY_ALL);
+
         //从数据库中加载数据
         initData();
         todoItemAdapter = new TodoItemAdapter(list);
+
+        //获取是否显示已完成待办的偏好
+        showCompleted = sharedPreferences.getBoolean("show_completed",true);
+        todoItemAdapter.setShowCompleted(showCompleted);//对adapter进行设置
+
+        //给筛选列表项装填数据
+        filterList.clear();
+        filterList.add("显示已完成的任务");
+        filterList.add("tag1");
+        filterList.add("tag1");
+        filterList.add("tag1");
     }
 
     @Override
@@ -91,21 +107,21 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         todoListRecyclerView.setAdapter(todoItemAdapter);
 
         //spinner相关
-        typeSpinner = mRootView.findViewById(R.id.todo_page_type_spinner);
+        AppCompatSpinner typeSpinner = mRootView.findViewById(R.id.todo_page_type_spinner);
         typeSpinner.setSelection(queryType);
         //设置选中的监听器
         typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent,
                                        View view, int position, long id) {
-                queryType = position;
+                queryType = position;//修改成员变量
                 if (isFirstSelect) {
                     //页面初始化时首次选中，数据已经加载好了，无需刷新
                     isFirstSelect = false;
                 } else {
                     SharedPreferences.Editor editor = mActivity.getSharedPreferences(
                             "todo_preference", Context.MODE_PRIVATE).edit();
-                    editor.putInt("select_todo_type", queryType);
+                    editor.putInt("select_todo_type", queryType);//存储偏好
                     editor.apply();
                     refresh();
                 }
@@ -114,6 +130,50 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+
+        //筛选器区域
+        LinearLayout filterArea = mRootView.findViewById(R.id.todo_page_filter_area);
+        filterArea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
+                dialog.setTitle(mActivity.getString(R.string.filter));
+                //用于记录哪个筛选项被选中的数组
+                final boolean[] checkedItems = new boolean[filterList.size()];
+                checkedItems[0] = showCompleted;//初始化“显示已完成”这一项
+                //多选事件
+                dialog.setMultiChoiceItems(filterList.toArray(new String[0]),
+                        checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        checkedItems[which] = isChecked;
+                    }
+                });
+                //点击确定按钮的事件
+                dialog.setPositiveButton(mActivity.getString(R.string.confirm),
+                        new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showCompleted = checkedItems[0];//修改成员变量
+                        todoItemAdapter.setShowCompleted(showCompleted);//给adapter传递消息
+                        SharedPreferences.Editor editor = mActivity.getSharedPreferences(
+                                "todo_preference", Context.MODE_PRIVATE).edit();
+                        editor.putBoolean("show_completed",showCompleted);//存储偏好
+                        editor.apply();
+                        //TODO 其他筛选项被选中
+                        refresh();
+                    }
+                });
+                //点击取消按钮的事件
+                dialog.setNegativeButton(mActivity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                dialog.show();
             }
         });
     }
@@ -133,34 +193,41 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         list.clear();
         TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(getContext(), "TodoDatabase.db", null, 1);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int is_complete_bound;
+        if (showCompleted) {
+            is_complete_bound = 1;
+        } else {
+            is_complete_bound = 0;
+        }
         Cursor cursor;
         switch (queryType) {
             case QUERY_TODAY:
                 Calendar today = Calendar.getInstance();
                 today.setTime(new Date());
                 cursor = db.rawQuery("SELECT id, title, is_complete, is_star, alarm, note, date " +
-                                "FROM TodoList WHERE date = ? " +
+                                "FROM TodoList WHERE date = ? AND is_complete <= ?" +
                                 "ORDER BY is_complete ASC, date ASC",
-                        new String[]{CalendarUtil.calendarToString(today, "yyyy-MM-dd")});
+                        new String[]{CalendarUtil.calendarToString(today, "yyyy-MM-dd"), is_complete_bound + ""});
                 break;
             case QUERY_IMPORTANT:
                 cursor = db.rawQuery("SELECT id, title, is_complete, is_star, alarm, note, date " +
-                        "FROM TodoList WHERE is_star = 1 " +
-                        "ORDER BY is_complete ASC, date ASC", null);
+                        "FROM TodoList WHERE is_star = 1 AND is_complete <= ?" +
+                        "ORDER BY is_complete ASC, date ASC", new String[]{is_complete_bound + ""});
                 break;
             case QUERY_HAS_PLANNED:
                 cursor = db.rawQuery("SELECT id, title, is_complete, is_star, alarm, note, date " +
-                        "FROM TodoList WHERE NOT date IS NULL " +
-                        "ORDER BY is_complete ASC, date ASC", null);
+                        "FROM TodoList WHERE NOT date IS NULL AND is_complete <= ?" +
+                        "ORDER BY is_complete ASC, date ASC", new String[]{is_complete_bound + ""});
                 break;
             case QUERY_HAS_NOT_PLANNED:
                 cursor = db.rawQuery("SELECT id, title, is_complete, is_star, alarm, note, date " +
-                        "FROM TodoList WHERE date IS NULL " +
-                        "ORDER BY is_complete ASC, date ASC", null);
+                        "FROM TodoList WHERE date IS NULL AND is_complete <= ?" +
+                        "ORDER BY is_complete ASC, date ASC", new String[]{is_complete_bound + ""});
                 break;
             default://QUERY_ALL
                 cursor = db.rawQuery("SELECT id, title, is_complete, is_star, alarm, note, date " +
-                        "FROM TodoList ORDER BY is_complete ASC, date ASC", null);
+                        "FROM TodoList WHERE is_complete <= ? " +
+                        "ORDER BY is_complete ASC, date ASC", new String[]{is_complete_bound + ""});
                 break;
         }
         if (cursor.moveToFirst()) {

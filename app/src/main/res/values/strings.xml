@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmartPlanner</string>
+    <string name="app_name">Smart Planner</string>
     <string name="nav_home">主页</string>
     <string name="nav_statistic">统计</string>
     <string name="nav_tomato">番茄钟</string>
@@ -28,5 +28,7 @@
     <string name="todo_type_has_planned">已计划</string>
     <string name="todo_type_has_not_planned">尚未计划</string>
     <string name="todo_type_all">全部</string>
-    <string name="no_filter">无筛选</string>
+    <string name="filter">筛选器</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
 </resources>
