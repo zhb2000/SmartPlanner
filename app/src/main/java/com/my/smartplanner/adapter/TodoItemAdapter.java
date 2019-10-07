@@ -1,5 +1,6 @@
 package com.my.smartplanner.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,8 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.activity.TodoDetailActivity;
-import com.my.smartplanner.other.TodoListItem;
-import com.my.smartplanner.util.DateUtil;
+import com.my.smartplanner.TodoListItem;
+import com.my.smartplanner.util.CalendarUtil;
 
 import java.util.Calendar;
 import java.util.List;
@@ -49,7 +50,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
         ImageView dateIcon;//日期图标
         ImageView alarmIcon;//闹钟图标
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             itemView = view;
             downLayout = view.findViewById(R.id.todo_item_down_layout);
@@ -123,8 +124,8 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
                 Intent intent = new Intent(mContext, TodoDetailActivity.class);
                 intent.putExtra("mode", TodoDetailActivity.EDIT_MODE);
                 intent.putExtra("id_in_database", idInDatabase);
-                intent.putExtra("position_in_adapter",position);
-                mContext.startActivity(intent);
+                intent.putExtra("position_in_adapter", position);
+                ((Activity)mContext).startActivityForResult(intent,1);
             }
         });
 
@@ -136,7 +137,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
         TodoListItem item = todoListItems.get(position);//获取实体类的对象
         holder.idInDatabase = item.getIdInDatabase();
         holder.title.setText(item.getTitle());//设置视图中的标题
-        boolean displayNote,displayAlarm,displayDate;
+        boolean displayNote, displayAlarm, displayDate;
         displayNote = displayAlarm = displayDate = true;
         //设置视图中是否完成的复选框
         if (item.getIsComplete()) {
@@ -144,7 +145,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
             TextView titleText = holder.title;
             titleText.setTextColor(mContext.getResources().getColor(R.color.grey));//文字颜色变成灰色
             titleText.setPaintFlags(titleText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);//设置删除线
-        }else{
+        } else {
             holder.completeCheckBox.setChecked(false);
             TextView titleText = holder.title;
             titleText.setTextColor(mContext.getResources().getColor(R.color.black));//文字颜色变成黑色
@@ -153,7 +154,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
         //设置视图中星标的复选框
         if (item.getIsStar()) {
             holder.starCheckBox.setChecked(true);
-        }else{
+        } else {
             holder.starCheckBox.setChecked(false);
         }
         //设置视图中的备注
@@ -161,49 +162,49 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
             holder.note.setVisibility(View.VISIBLE);
             holder.noteIcon.setVisibility(View.VISIBLE);
             holder.note.setText(item.getNote());
-        }else {
+        } else {
             holder.note.setVisibility(View.GONE);
             holder.noteIcon.setVisibility(View.GONE);
-            displayNote=false;
+            displayNote = false;
         }
         //设置视图中的闹钟图标
         if (item.getHasAlarm()) {
             holder.alarmIcon.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             holder.alarmIcon.setVisibility(View.GONE);
-            displayAlarm=false;
+            displayAlarm = false;
         }
         //设置视图中的日期
         if (item.getDate() != null) {
             holder.dateIcon.setVisibility(View.VISIBLE);
             String displayDateText = null;
             Calendar dateCalendar = item.getDate();
-            switch (DateUtil.dateLocation(dateCalendar)) {
-                case 0://今天
+            switch (CalendarUtil.dateLocation(dateCalendar)) {
+                case CalendarUtil.DATE_LOCATION_TODAY://今天
                     displayDateText = mContext.getResources().getString(R.string.today);
                     //颜色改成蓝色
                     holder.dateText.setTextColor(mContext.getResources().getColor(R.color.blue));
                     holder.dateIcon.setColorFilter(mContext.getResources().getColor(R.color.blue), PorterDuff.Mode.SRC_IN);
                     break;
-                case -1://昨天
+                case CalendarUtil.DATE_LOCATION_YESTERDAY://昨天
                     displayDateText = mContext.getResources().getString(R.string.yesterday);
                     //颜色改成红色
                     holder.dateText.setTextColor(mContext.getResources().getColor(R.color.red));
                     holder.dateIcon.setColorFilter(mContext.getResources().getColor(R.color.red), PorterDuff.Mode.SRC_IN);
                     break;
-                case 1://明天
+                case CalendarUtil.DATE_LOCATION_TOMORROW://明天
                     displayDateText = mContext.getResources().getString(R.string.tomorrow);
                     //颜色改成灰色
                     holder.dateText.setTextColor(mContext.getResources().getColor(R.color.grey));
                     holder.dateIcon.setColorFilter(mContext.getResources().getColor(R.color.grey), PorterDuff.Mode.SRC_IN);
                     break;
-                case -2://以前
+                case CalendarUtil.DATE_LOCATION_LONG_BEFORE://以前
                     displayDateText = item.getMonth() + "月" + item.getDayOfMonth() + "日";
                     //颜色改成红色
                     holder.dateText.setTextColor(mContext.getResources().getColor(R.color.red));
                     holder.dateIcon.setColorFilter(mContext.getResources().getColor(R.color.red), PorterDuff.Mode.SRC_IN);
                     break;
-                case 2://未来
+                case CalendarUtil.DATE_LOCATION_LONG_AFTER://未来
                     displayDateText = item.getMonth() + "月" + item.getDayOfMonth() + "日";
                     //颜色改成灰色
                     holder.dateText.setTextColor(mContext.getResources().getColor(R.color.grey));
@@ -212,14 +213,16 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
             }
             holder.dateText.setVisibility(View.VISIBLE);
             holder.dateText.setText(displayDateText);
-        }else {
+        } else {
             holder.dateIcon.setVisibility(View.GONE);
             holder.dateText.setVisibility(View.GONE);
-            displayDate=false;
+            displayDate = false;
         }
         //设置下面一行布局框是否占位
-        if(!displayNote&&!displayAlarm&&!displayDate){
+        if (!displayNote && !displayAlarm && !displayDate) {
             holder.downLayout.setVisibility(View.GONE);
+        } else {
+            holder.downLayout.setVisibility(View.VISIBLE);
         }
     }
 

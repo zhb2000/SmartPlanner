@@ -22,5 +22,11 @@
     <string name="habit">习惯</string>
     <string name="select_todo_alarm_time">选择提醒时间</string>
     <string name="select_todo_date">选择日期</string>
-
+    <string name="todo_detail_page">待办事项详情</string>
+    <string name="todo_type_today">今天</string>
+    <string name="todo_type_important">重要</string>
+    <string name="todo_type_has_planned">已计划</string>
+    <string name="todo_type_has_not_planned">尚未计划</string>
+    <string name="todo_type_all">全部</string>
+    <string name="no_filter">无筛选</string>
 </resources>

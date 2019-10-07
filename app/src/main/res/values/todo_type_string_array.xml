@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="todo_types">
+        <item>@string/todo_type_today</item>
+        <item>@string/todo_type_important</item>
+        <item>@string/todo_type_has_planned</item>
+        <item>@string/todo_type_has_not_planned</item>
+        <item>@string/todo_type_all</item>
+    </string-array>
+</resources>

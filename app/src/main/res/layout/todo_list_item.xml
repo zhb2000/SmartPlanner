@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="68dp"
     android:orientation="horizontal"
@@ -49,7 +50,8 @@
                 android:src="@mipmap/ic_calendar_today_black"
                 android:tint="@color/blue"
                 android:scaleType="centerCrop"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                tools:ignore="ContentDescription"/>
             <!--日期文本-->
             <TextView
                 android:id="@+id/todo_item_date_text"
@@ -70,7 +72,8 @@
                 android:src="@mipmap/ic_alarm_black"
                 android:tint="@color/grey"
                 android:scaleType="centerCrop"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                tools:ignore="ContentDescription"/>
             <!--备注图标-->
             <ImageView
                 android:id="@+id/todo_item_note_icon"
@@ -81,7 +84,8 @@
                 android:src="@mipmap/ic_note_black"
                 android:tint="@color/grey"
                 android:scaleType="centerCrop"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                tools:ignore="ContentDescription"/>
             <!--备注文本-->
             <TextView
                 android:id="@+id/todo_item_note"
