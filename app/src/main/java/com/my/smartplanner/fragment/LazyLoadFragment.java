@@ -1,10 +1,13 @@
 package com.my.smartplanner.fragment;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
 import com.my.smartplanner.util.LogUtil;
+
+import java.lang.ref.WeakReference;
 
 public abstract class LazyLoadFragment extends BaseFragment {
     private boolean isInit = false;//是否已初始化
@@ -24,6 +27,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
     private void tryLoadData() {
         if (!isLoadData && isInit && isVisible) {
             isLoadData = true;
+            LogUtil.d("func","load data");
             loadData();
         }
     }
@@ -32,6 +36,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
     private void tryLoadView() {
         if (!isLoadView && isInit && isVisible) {
             isLoadView = true;
+            LogUtil.d("func","load view");
             loadView();
         }
     }
@@ -47,6 +52,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
         因为无法在setUserVisibleHint方法中进行它的加载工作*/
         tryLoadData();
         tryLoadView();
+        //new TryLoadDataAndViewTask(this).execute();
     }
 
     /*加载数据*/
@@ -69,6 +75,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
             isVisible = true;
             tryLoadData();
             tryLoadView();
+            //new TryLoadDataAndViewTask(this).execute();
         } else {
             isVisible = false;
         }
@@ -84,5 +91,28 @@ public abstract class LazyLoadFragment extends BaseFragment {
         isLoadView = false;
     }
 
+    static class TryLoadDataAndViewTask extends AsyncTask<Void, Integer, Boolean> {
+
+        WeakReference<LazyLoadFragment> fragmentReference;
+
+        TryLoadDataAndViewTask(LazyLoadFragment fragment) {
+            fragmentReference = new WeakReference<>(fragment);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            LogUtil.d("func","task try load data");
+            fragmentReference.get().tryLoadData();
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if (aBoolean) {
+                LogUtil.d("func","task try load view");
+                fragmentReference.get().tryLoadView();
+            }
+        }
+    }
 
 }

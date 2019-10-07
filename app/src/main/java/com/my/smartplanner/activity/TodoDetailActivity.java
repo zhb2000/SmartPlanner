@@ -49,9 +49,14 @@ public class TodoDetailActivity extends AppCompatActivity {
     public static final int CREATE_MODE = 0;//启动方式为创建模式
     public static final int EDIT_MODE = 1;//启动方式为编辑模式
 
+    //活动返回的数据-返回状态
+    public static final int RETURN_STATUS_ADD_NEW = 1;//本待办条目为新增条目
+    public static final int RETURN_STATUS_CHANGE_ITEM = 2;//本待办条目被修改
+    public static final int RETURN_STATUS_REMOVE_ITEM = 3;//本待办条目被移除
+
     private SQLiteDatabase db;
     private int mode;//模式
-    private int positionInAdapter;//下标位置
+    private int listIndex;//该条目在adapter的列表中的下标
     private int id = 0;//待办条目在数据库中的id
     private String title = null;//标题
     private boolean isComplete = false;//是否完成
@@ -92,7 +97,7 @@ public class TodoDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mode = intent.getIntExtra("mode", 0);
         if (mode == EDIT_MODE) {//从数据库中提取数据
-            positionInAdapter = intent.getIntExtra("position_in_adapter", 0);
+            listIndex = intent.getIntExtra("position_in_adapter", 0);
             id = intent.getIntExtra("id_in_database", 1);
             //利用id在数据库中找到这一行
             Cursor cursor = db.rawQuery("SELECT * FROM TodoList WHERE id = ?", new String[]{"" + id});
@@ -328,8 +333,8 @@ public class TodoDetailActivity extends AppCompatActivity {
                                                         SublimeRecurrencePicker.RecurrenceOption recurrenceOption,
                                                         String recurrenceRule) {
                         Calendar calendar = selectedDate.getFirstDate();
-                        calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
-                        calendar.set(Calendar.MINUTE,minute);
+                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        calendar.set(Calendar.MINUTE, minute);
                         alarmString = CalendarUtil.calendarToString(calendar, "yyyy-MM-dd HH:mm");
                         selectAlarmTextView.setText(alarmString);
                         selectAlarmTextView.setTextColor(getResources().getColor(R.color.blue));
@@ -374,13 +379,16 @@ public class TodoDetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
             case R.id.todo_detail_menu_delete:
                 if (mode == EDIT_MODE) {
                     db.execSQL("DELETE FROM TodoList WHERE id = ?", new String[]{"" + id});
                     Intent intent = new Intent();
-                    intent.putExtra("return_status",3);//删除
-                    intent.putExtra("pos_in_adapter",positionInAdapter);
-                    setResult(RESULT_OK,intent);
+                    intent.putExtra("return_status", RETURN_STATUS_REMOVE_ITEM);//删除
+                    intent.putExtra("list_index", listIndex);
+                    setResult(RESULT_OK, intent);
                 }
                 finish();
                 break;
@@ -399,7 +407,7 @@ public class TodoDetailActivity extends AppCompatActivity {
         Intent intent = new Intent();//返回的数据信息
         if (mode == EDIT_MODE) {
             //标题有东西
-            if (!TextUtils.isEmpty(titleEditText.getText())) {//TODO 空格也不行、防止sql注入、判断是否有修改以更新修改时间
+            if (!TextUtils.isEmpty(titleEditText.getText().toString().trim())) {
                 title = titleEditText.getText().toString();
                 if (!TextUtils.isEmpty(noteEditText.getText())) {
                     note = noteEditText.getText().toString();
@@ -424,17 +432,18 @@ public class TodoDetailActivity extends AppCompatActivity {
                 values.put("alarm", alarmString);
                 db.update("TodoList", values, "id = ?", new String[]{"" + id});
 
-                intent.putExtra("return_status",2);//修改
-                intent.putExtra("pos_in_adapter",positionInAdapter);
-                setResult(RESULT_OK,intent);
-            }else{
+                intent.putExtra("return_status", RETURN_STATUS_CHANGE_ITEM);//修改
+                intent.putExtra("list_index", listIndex);
+                intent.putExtra("database_id", id);
+                setResult(RESULT_OK, intent);
+            } else {
                 setResult(RESULT_CANCELED);//无变化
             }
 
         } else {//CREATE_MODE
             title = titleEditText.getText().toString();
             //标题有东西
-            if (!TextUtils.isEmpty(titleEditText.getText())) {//TODO 空格也不行、防止sql注入
+            if (!TextUtils.isEmpty(titleEditText.getText().toString().trim())) {
                 title = titleEditText.getText().toString();
                 if (!TextUtils.isEmpty(noteEditText.getText())) {
                     note = noteEditText.getText().toString();
@@ -462,9 +471,9 @@ public class TodoDetailActivity extends AppCompatActivity {
                 values.put("alarm", alarmString);
                 db.insert("TodoList", null, values);
 
-                intent.putExtra("return_status",1);//新增
-                setResult(RESULT_OK,intent);
-            }else {
+                intent.putExtra("return_status", RETURN_STATUS_ADD_NEW);//新增
+                setResult(RESULT_OK, intent);
+            } else {
                 setResult(RESULT_CANCELED);//无变化
             }
         }

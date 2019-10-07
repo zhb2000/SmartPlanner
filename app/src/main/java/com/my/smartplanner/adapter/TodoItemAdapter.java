@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.activity.TodoDetailActivity;
-import com.my.smartplanner.other.TodoListItem;
+import com.my.smartplanner.TodoListItem;
 import com.my.smartplanner.util.CalendarUtil;
 
 import java.util.Calendar;

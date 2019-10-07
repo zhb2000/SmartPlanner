@@ -12,15 +12,14 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.jaeger.library.StatusBarUtil;
 import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
@@ -28,6 +27,7 @@ import com.my.smartplanner.R;
 import com.my.smartplanner.fragment.TodoFragment;
 import com.my.smartplanner.adapter.ViewPagerAdapter;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO 怎样更好地获取fragment的实例
     private TodoFragment todoFragment1;
-    private TodoFragment todoFragment2;
+    private TodoFragment todoPageFragment;
     private TodoFragment todoFragment3;
 
     @Override
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //浮动按钮相关
-        addFab = (FloatingActionButton) findViewById(R.id.home_add_fab);
+        addFab = findViewById(R.id.home_add_fab);
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, TodoDetailActivity.class);
                 intent.putExtra("mode", TodoDetailActivity.CREATE_MODE);
                 //startActivity(intent);
-                startActivityForResult(intent,2);
+                startActivityForResult(intent, 2);
             }
         });
         /*addFab.setOnClickListener(new View.OnClickListener() {
@@ -122,10 +122,10 @@ public class MainActivity extends AppCompatActivity {
         //tab栏相关操作
         List<Fragment> fragments = new ArrayList<>();
         todoFragment1 = TodoFragment.newInstance();
-        todoFragment2 = TodoFragment.newInstance();
+        todoPageFragment = TodoFragment.newInstance();
         todoFragment3 = TodoFragment.newInstance();
         fragments.add(todoFragment1);
-        fragments.add(todoFragment2);
+        fragments.add(todoPageFragment);
         fragments.add(todoFragment3);
         List<String> titleList = new ArrayList<>();
         titleList.add(getString(R.string.advice));
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 加载菜单
-     * */
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.todo_page_menu, menu);
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 菜单选中事件
-     * */
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.todo_page_refresh:
-                todoPageRefresh();
+                todoPageFragment.refresh();
                 break;
             case R.id.todo_page_add_many:
                 addMany();
@@ -207,47 +207,37 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 按下返回键
-     * */
+     */
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
 
     /**
-     * 刷新待办页面
-     * */
-    private void todoPageRefresh() {
-        //TODO 刷新待办页面
-        todoFragment2.refresh();
-    }
-
-    private void todoPageUpdateItemChange(int pos){
-        todoFragment2.updateChange(pos);
-    }
-
-    /**
      * 删除所有待办数据
-     * */
-    private void deleteALLTodo(){
-        new Thread(new Runnable() {
+     */
+    private void deleteALLTodo() {
+        new DeleteAllTodoTask(this, todoPageFragment).execute();
+        /*new Thread(new Runnable() {
             @Override
             public void run() {
                 TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(MainActivity.this, "TodoDatabase.db", null, 1);
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 db.execSQL("DELETE FROM TodoList");
             }
-        }).start();
+        }).start();*/
     }
 
     /**
      * 添加50条待办数据
-     * */
+     */
     private void addMany() {
-        new Thread(new Runnable() {
+        new AddManyTask(this, todoPageFragment).execute();
+        /*new Thread(new Runnable() {
             @Override
             public void run() {
                 TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(MainActivity.this, "TodoDatabase.db", null, 1);
@@ -257,46 +247,91 @@ public class MainActivity extends AppCompatActivity {
                             "VALUES ('Here is the title.',0,0,'2019-12-12 12:12','Here is a note.','2019-11-11','2019-11-11 11:11:00')");
                 }
             }
-        }).start();
+        }).start();*/
     }
 
+    static class DeleteAllTodoTask extends AsyncTask<Void, Integer, Boolean> {
+
+        private WeakReference<MainActivity> activityReference;
+        private WeakReference<TodoFragment> todoFragmentReference;
+
+        //仅持有对activity和Fragment的弱引用
+        DeleteAllTodoTask(MainActivity mainActivity, TodoFragment todoFragment) {
+            activityReference = new WeakReference<>(mainActivity);
+            todoFragmentReference = new WeakReference<>(todoFragment);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(activityReference.get(), "TodoDatabase.db", null, 1);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            db.execSQL("DELETE FROM TodoList");
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            //super.onPostExecute(aBoolean);
+            if (aBoolean) {
+                todoFragmentReference.get().refresh();
+            }
+        }
+    }
+
+    static class AddManyTask extends AsyncTask<Void, Integer, Boolean> {
+
+        private WeakReference<MainActivity> activityReference;
+        private WeakReference<TodoFragment> todoFragmentReference;
+
+        //仅持有对activity和Fragment的弱引用
+        AddManyTask(MainActivity mainActivity, TodoFragment todoFragment) {
+            activityReference = new WeakReference<>(mainActivity);
+            todoFragmentReference = new WeakReference<>(todoFragment);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(activityReference.get(), "TodoDatabase.db", null, 1);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            for (int i = 1; i <= 50; i++) {
+                db.execSQL("INSERT INTO TodoList (title,is_complete,is_star,alarm,note,date,create_time) " +
+                        "VALUES ('Here is the title.',0,0,'2019-12-12 12:12','Here is a note.','2019-11-11','2019-11-11 11:11:00')");
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            //super.onPostExecute(aBoolean);
+            if (aBoolean) {
+                todoFragmentReference.get().refresh();
+            }
+        }
+    }
+
+    /**
+     * 提取从其他活动返回的数据
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK)//有变化
+        //TODO 请求码requestCode
+        if (resultCode == RESULT_OK)//有变化
         {
-            int ret_status = data.getIntExtra("return_status",0);//TODO 空指针
-            if(ret_status==1){//新增
-                todoPageRefresh();
-            }else if(ret_status == 2){//修改
-                int pos = data.getIntExtra("pos_in_adapter",0);
-                todoPageUpdateItemChange(pos);
-            }else{
-                int pos = data.getIntExtra("pos_in_adapter",0);
-                todoFragment2.removeItemUpdate(pos);//TODO 更简洁地与Fragment通信
+            if (data != null) {
+                int returnStatus = data.getIntExtra("return_status", 0);
+                if (returnStatus == TodoDetailActivity.RETURN_STATUS_ADD_NEW) {//新增
+                    todoPageFragment.refresh();
+                } else if (returnStatus == TodoDetailActivity.RETURN_STATUS_CHANGE_ITEM) {//修改
+                    int listIndex = data.getIntExtra("list_index", 0);
+                    int databaseId = data.getIntExtra("database_id", 0);
+                    todoPageFragment.updateChange(listIndex, databaseId);
+                } else if (returnStatus == TodoDetailActivity.RETURN_STATUS_REMOVE_ITEM) {//移除
+                    int pos = data.getIntExtra("list_index", 0);
+                    todoPageFragment.removeItemUpdate(pos);//TODO 更简洁地与Fragment通信
+                }
             }
         }
-        /*switch (requestCode){
-            case 1:
-                if(resultCode==RESULT_OK){
-                    int ret_status = data.getIntExtra("return_status",0);
-                    if(ret_status==1){
-                        todoPageRefresh();
-                    }else{
-                        todoPageRefresh();
-                    }
-                }
-                break;
-            case 2:
-                if(resultCode==RESULT_OK){
-                    int ret_status = data.getIntExtra("return_status",0);
-                    if(ret_status==1){
-                        todoPageRefresh();
-                    }else{
-                        todoPageRefresh();
-                    }
-                }
-                break;
-        }*/
     }
+
 }

@@ -6,10 +6,81 @@
     android:layout_height="match_parent"
     tools:context=".fragment.TodoFragment">
 
-    <!--待办列表-->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/todo_list_recycler_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:isScrollContainer="true">
+
+        <!--头部-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/todo_page_type_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:entries="@array/todo_types"
+                android:dropDownWidth="150dp"
+                android:spinnerMode="dropdown"/>
+            <!--android:theme="@style/TodoTypeSpinner"-->
+
+            <!--中间占位用-->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <LinearLayout
+                android:id="@+id/todo_page_filter_area"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:textColor="@color/grey"
+                    android:textSize="15sp"
+                    android:text="@string/no_filter"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/ic_filter_list_black"
+                    android:tint="@color/grey"
+                    tools:ignore="ContentDescription"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!--分隔线-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider_line_grey"/>
+
+        <!--待办列表-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/todo_list_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

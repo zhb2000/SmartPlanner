@@ -37,6 +37,70 @@
         android:focusable="true"
         android:focusableInTouchMode="true">
 
+        <!--<HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <com.google.android.material.chip.ChipGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:singleLine="true">
+
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:closeIconEnabled="true"
+                    android:text="未设置样式"
+                    android:theme="@style/Theme.MaterialComponents.Light" />
+
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="未设置样式"
+                    android:theme="@style/Theme.MaterialComponents.Light" />
+
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="未设置样式"
+                    android:theme="@style/Theme.MaterialComponents.Light" />
+
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="未设置样式"
+                    android:theme="@style/Theme.MaterialComponents.Light" />
+
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="未设置样式"
+                    android:theme="@style/Theme.MaterialComponents.Light" />
+
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="未设置样式"
+                    android:theme="@style/Theme.MaterialComponents.Light" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </HorizontalScrollView>-->
+
         <!--标题的那一行卡片-->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -69,6 +133,9 @@
                     android:layout_weight="1"
                     android:textSize="22sp"
                     android:gravity="center_vertical"
+                    android:lines="1"
+                    android:inputType="text"
+                    android:imeOptions="actionDone"
                     android:maxLines="1"
                     android:maxLength="50"
                     android:background="@null"
@@ -160,7 +227,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="54dp"
                     android:layout_marginLeft="54dp"
-                    android:background="#ebebeb"/>
+                    android:background="@color/divider_line_grey"/>
 
                 <!--第2行选择提醒-->
                 <LinearLayout

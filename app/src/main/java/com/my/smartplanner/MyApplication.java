@@ -1,4 +1,4 @@
-package com.my.smartplanner.other;
+package com.my.smartplanner;
 
 import android.app.Application;
 import android.content.Context;
