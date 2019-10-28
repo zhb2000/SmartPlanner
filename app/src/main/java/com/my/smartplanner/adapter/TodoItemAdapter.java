@@ -24,6 +24,7 @@ import com.my.smartplanner.util.CalendarUtil;
 import com.my.smartplanner.util.LogUtil;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -85,7 +86,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
             mContext = parent.getContext();
         }
         //打开数据库
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(mContext, "TodoDatabase.db", null, 1);
+        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(mContext, "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
         db = dbHelper.getWritableDatabase();
         //进行视图相关的操作
         View view = LayoutInflater.from(mContext).inflate(R.layout.todo_list_item, parent, false);
@@ -98,7 +99,12 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
                 if (holder.completeCheckBox.isChecked()) {//变为完成
                     titleText.setTextColor(mContext.getResources().getColor(R.color.grey));//文字颜色变成灰色
                     titleText.setPaintFlags(titleText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);//设置删除线
-                    db.execSQL("UPDATE TodoList SET is_complete = 1 WHERE id = ?", new String[]{"" + holder.idInDatabase});
+                    Calendar completeCalendar = Calendar.getInstance();
+                    completeCalendar.setTime(new Date());
+                    db.execSQL("UPDATE TodoList " +
+                                    "SET is_complete = 1, complete_time = ? WHERE id = ?",
+                            new String[]{CalendarUtil.calendarToString(completeCalendar,
+                                    "yyyy-MM-dd HH:mm:ss"), "" + holder.idInDatabase});
                     //当前模式为不显示已完成任务
                     if (!showCompleted) {
                         int position = holder.getAdapterPosition();//获取条目的下标
@@ -108,7 +114,8 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
                 } else {//变为未完成
                     titleText.setTextColor(mContext.getResources().getColor(R.color.black));//文字颜色变成黑色
                     titleText.setPaintFlags(titleText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));//取消删除线
-                    db.execSQL("UPDATE TodoList SET is_complete = 0 WHERE id = ?", new String[]{"" + holder.idInDatabase});
+                    db.execSQL("UPDATE TodoList SET is_complete = 0,  complete_time = NULL " +
+                            "WHERE id = ?", new String[]{"" + holder.idInDatabase});
                 }
             }
         });
@@ -242,8 +249,9 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
 
     /**
      * 设置是否显示已完成的待办条目
+     *
      * @param showCompleted 是否显示已完成
-     * */
+     */
     public void setShowCompleted(boolean showCompleted) {
         this.showCompleted = showCompleted;
     }

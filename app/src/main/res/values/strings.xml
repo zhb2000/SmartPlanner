@@ -31,4 +31,8 @@
     <string name="filter">筛选器</string>
     <string name="cancel">取消</string>
     <string name="confirm">确定</string>
+    <string name="create_time">创建时间</string>
+    <string name="complete_time">完成时间</string>
+    <string name="not_created_yet">尚未创建</string>
+    <string name="not_completed_yet">尚未完成</string>
 </resources>

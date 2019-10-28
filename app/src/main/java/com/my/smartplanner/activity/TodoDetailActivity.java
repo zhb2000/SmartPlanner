@@ -2,6 +2,7 @@ package com.my.smartplanner.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -38,8 +39,10 @@ import com.my.smartplanner.fragment.SublimePickerFragment;
 import com.my.smartplanner.util.CalendarUtil;
 import com.my.smartplanner.util.LogUtil;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 待办条目详情页面的Activity
@@ -91,7 +94,7 @@ public class TodoDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_todo_detail);
 
         //打开数据库
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(TodoDetailActivity.this, "TodoDatabase.db", null, 1);
+        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(TodoDetailActivity.this, "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
         db = dbHelper.getWritableDatabase();
         //从intent中提取数据
         Intent intent = getIntent();
@@ -108,6 +111,9 @@ public class TodoDetailActivity extends AppCompatActivity {
             isStar = cursor.getInt(cursor.getColumnIndex("is_star")) == 1;
             note = cursor.getString(cursor.getColumnIndex("note"));
             tag = cursor.getString(cursor.getColumnIndex("tag"));
+            if (tag != null) {
+                tag = tag.trim();
+            }
             completeTime = cursor.getString(cursor.getColumnIndex("complete_time"));
             editTime = cursor.getString(cursor.getColumnIndex("edit_time"));
             createTime = cursor.getString(cursor.getColumnIndex("create_time"));
@@ -379,9 +385,11 @@ public class TodoDetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            //返回小箭头
             case android.R.id.home:
                 onBackPressed();
                 break;
+            //菜单-删除
             case R.id.todo_detail_menu_delete:
                 if (mode == EDIT_MODE) {
                     db.execSQL("DELETE FROM TodoList WHERE id = ?", new String[]{"" + id});
@@ -392,20 +400,37 @@ public class TodoDetailActivity extends AppCompatActivity {
                 }
                 finish();
                 break;
+            //菜单-详情
             case R.id.todo_detail_menu_view_detail:
-                Toast.makeText(this, "You click detail", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                dialog.setTitle(getString(R.string.view_detail));
+                StringBuilder message = new StringBuilder();
+                String createTimeStr;
+                String completeTimeStr;
+                if (mode == CREATE_MODE) {
+                    createTimeStr = getString(R.string.not_created_yet);
+                    completeTimeStr = getString(R.string.not_completed_yet);
+                } else {
+                    createTimeStr = (createTime != null) ? createTime : getString(R.string.not_created_yet);
+                    completeTimeStr = (completeTime != null) ? completeTime : getString(R.string.not_completed_yet);
+                }
+                message.append(getString(R.string.create_time)).append("：").append(createTimeStr)
+                        .append("\n")
+                        .append(getString(R.string.complete_time)).append("：").append(completeTimeStr);
+                dialog.setMessage(message);
+                dialog.show();
                 break;
         }
         return true;
     }
 
     /**
-     * 按下返回键
+     * 按下返回键，保存数据
      */
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();//返回的数据信息
-        if (mode == EDIT_MODE) {
+        if (mode == EDIT_MODE) {//编辑模式
             //标题有东西
             if (!TextUtils.isEmpty(titleEditText.getText().toString().trim())) {
                 title = titleEditText.getText().toString();
@@ -414,8 +439,9 @@ public class TodoDetailActivity extends AppCompatActivity {
                 } else {
                     note = null;
                 }
-                if (!TextUtils.isEmpty(tagEditText.getText())) {
-                    tag = tagEditText.getText().toString();
+                if (!TextUtils.isEmpty(tagEditText.getText().toString().trim())) {
+                    tag = " " + tagEditText.getText().toString() + " ";
+                    addTags(tag);
                 } else {
                     tag = null;
                 }
@@ -440,7 +466,7 @@ public class TodoDetailActivity extends AppCompatActivity {
                 setResult(RESULT_CANCELED);//无变化
             }
 
-        } else {//CREATE_MODE
+        } else {//创建模式
             title = titleEditText.getText().toString();
             //标题有东西
             if (!TextUtils.isEmpty(titleEditText.getText().toString().trim())) {
@@ -450,14 +476,16 @@ public class TodoDetailActivity extends AppCompatActivity {
                 } else {
                     note = null;
                 }
-                if (!TextUtils.isEmpty(tagEditText.getText())) {
-                    tag = tagEditText.getText().toString();
+                if (!TextUtils.isEmpty(tagEditText.getText().toString().trim())) {
+                    tag = " " + tagEditText.getText().toString() + " ";
+                    addTags(tag);
                 } else {
                     tag = null;
                 }
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(new Date());
-                createTime = CalendarUtil.calendarToString(calendar, "yyyy-MM-dd HH:mm:ss");
+                Calendar createCalendar = Calendar.getInstance();
+                createCalendar.setTime(new Date());
+                createTime = CalendarUtil.calendarToString(createCalendar,
+                        "yyyy-MM-dd HH:mm:ss");
 
                 ContentValues values = new ContentValues();
                 values.put("title", title);
@@ -506,4 +534,27 @@ public class TodoDetailActivity extends AppCompatActivity {
         }
     }
 
+    private void addTags(String tagString) {
+        String[] tagBuffs = splitTagString(tagString);
+        for (String singleTag : tagBuffs) {
+            db.execSQL("INSERT OR IGNORE INTO TodoTag (tag_name) values(?)", new String[]{singleTag});
+        }
+    }
+
+    private String[] splitTagString(String tagString) {
+        List<String> tagBuffs = new ArrayList<>();
+        StringBuilder segment = new StringBuilder();
+        for (int i = 0; i < tagString.length(); i++) {
+            char ch = tagString.charAt(i);
+            if (ch != ' ') {
+                segment.append(ch);
+            } else {
+                if (segment.length() != 0) {
+                    tagBuffs.add(segment.toString());
+                    segment.setLength(0);
+                }
+            }
+        }
+        return tagBuffs.toArray(new String[0]);
+    }
 }
