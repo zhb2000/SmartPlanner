@@ -21,8 +21,10 @@ import com.my.smartplanner.R;
 import com.my.smartplanner.activity.TodoDetailActivity;
 import com.my.smartplanner.TodoListItem;
 import com.my.smartplanner.util.CalendarUtil;
+import com.my.smartplanner.util.LogUtil;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,9 +32,10 @@ import java.util.List;
  */
 public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHolder> {
 
-    private Context mContext;
-    private List<TodoListItem> todoListItems;
-    private SQLiteDatabase db;
+    private Context mContext;//上下文
+    private List<TodoListItem> todoListItems;//待办条目列表
+    private SQLiteDatabase db;//待办数据库
+    private boolean showCompleted;//是否显示已完成的条目
 
     /**
      * 内部类ViewHolder
@@ -50,6 +53,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
         ImageView dateIcon;//日期图标
         ImageView alarmIcon;//闹钟图标
 
+        //ViewHolder的构造函数
         ViewHolder(View view) {
             super(view);
             itemView = view;
@@ -82,7 +86,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
             mContext = parent.getContext();
         }
         //打开数据库
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(mContext, "TodoDatabase.db", null, 1);
+        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(mContext, "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
         db = dbHelper.getWritableDatabase();
         //进行视图相关的操作
         View view = LayoutInflater.from(mContext).inflate(R.layout.todo_list_item, parent, false);
@@ -95,11 +99,23 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
                 if (holder.completeCheckBox.isChecked()) {//变为完成
                     titleText.setTextColor(mContext.getResources().getColor(R.color.grey));//文字颜色变成灰色
                     titleText.setPaintFlags(titleText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);//设置删除线
-                    db.execSQL("UPDATE TodoList SET is_complete = 1 WHERE id = ?", new String[]{"" + holder.idInDatabase});
+                    Calendar completeCalendar = Calendar.getInstance();
+                    completeCalendar.setTime(new Date());
+                    db.execSQL("UPDATE TodoList " +
+                                    "SET is_complete = 1, complete_time = ? WHERE id = ?",
+                            new String[]{CalendarUtil.calendarToString(completeCalendar,
+                                    "yyyy-MM-dd HH:mm:ss"), "" + holder.idInDatabase});
+                    //当前模式为不显示已完成任务
+                    if (!showCompleted) {
+                        int position = holder.getAdapterPosition();//获取条目的下标
+                        todoListItems.remove(position);
+                        notifyItemRemoved(position);
+                    }
                 } else {//变为未完成
                     titleText.setTextColor(mContext.getResources().getColor(R.color.black));//文字颜色变成黑色
                     titleText.setPaintFlags(titleText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));//取消删除线
-                    db.execSQL("UPDATE TodoList SET is_complete = 0 WHERE id = ?", new String[]{"" + holder.idInDatabase});
+                    db.execSQL("UPDATE TodoList SET is_complete = 0,  complete_time = NULL " +
+                            "WHERE id = ?", new String[]{"" + holder.idInDatabase});
                 }
             }
         });
@@ -118,14 +134,14 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                int idInDatabase = todoListItems.get(position).getIdInDatabase();
+                int position = holder.getAdapterPosition();//获取条目的下标
+                int idInDatabase = todoListItems.get(position).getIdInDatabase();//获取在数据库中的id
                 //TODO 更改启动Activity的方式
                 Intent intent = new Intent(mContext, TodoDetailActivity.class);
                 intent.putExtra("mode", TodoDetailActivity.EDIT_MODE);
                 intent.putExtra("id_in_database", idInDatabase);
                 intent.putExtra("position_in_adapter", position);
-                ((Activity)mContext).startActivityForResult(intent,1);
+                ((Activity) mContext).startActivityForResult(intent, 1);
             }
         });
 
@@ -229,5 +245,14 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
     @Override
     public int getItemCount() {
         return todoListItems.size();
+    }
+
+    /**
+     * 设置是否显示已完成的待办条目
+     *
+     * @param showCompleted 是否显示已完成
+     */
+    public void setShowCompleted(boolean showCompleted) {
+        this.showCompleted = showCompleted;
     }
 }

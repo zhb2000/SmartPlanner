@@ -12,8 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public abstract class BaseFragment extends Fragment {
-    protected Activity mActivity;
-    protected View mRootView;
+    protected Activity mActivity;//Activity引用
+    protected View mRootView;//当前View
     /**
      * 说明：在此处保存全局的Context
      *
@@ -22,7 +22,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mActivity = (Activity) context;
+        mActivity = (Activity) context;//获取Activity引用
     }
 
     @Nullable
@@ -30,7 +30,7 @@ public abstract class BaseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(getLayoutId(), container, false);
-        initWhenOnCreateView();
+        initView(savedInstanceState);
         return mRootView;
     }
 
@@ -41,8 +41,9 @@ public abstract class BaseFragment extends Fragment {
 
     /**
      * 说明：创建视图时的初始化操作均写在该方法
+     * 该方法将在onCreateView()方法中执行
      */
-    protected abstract void initWhenOnCreateView();
+    protected abstract void initView(Bundle savedInstanceState);
 
     /**
      * 获取控件对象

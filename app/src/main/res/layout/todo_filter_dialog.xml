@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/selected_recurrence_option_drawable_padding"
+    android:paddingRight="@dimen/selected_recurrence_option_drawable_padding">
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/todo_filter_dialog_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/button_padding_horizontal_material"
+        android:layout_marginBottom="@dimen/repeat_options_menu_top_margin"
+        android:layout_marginTop="@dimen/repeat_options_menu_top_margin"
+        android:text="显示已完成"
+        android:textSize="15sp"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:textSize="15sp"
+            android:textColor="@color/grey"
+            android:text="标签:"/>
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/todo_filter_dialog_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"/>
+    </LinearLayout>
+
+</LinearLayout>

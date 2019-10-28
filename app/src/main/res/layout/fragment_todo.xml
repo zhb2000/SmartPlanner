@@ -17,14 +17,15 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@color/white"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
+            android:orientation="horizontal">
 
+            <!--下拉选择框-->
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/todo_page_type_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:entries="@array/todo_types"
@@ -43,18 +44,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginStart="0dp"
                     android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     android:textColor="@color/grey"
                     android:textSize="15sp"
-                    android:text="@string/no_filter"/>
+                    android:text="@string/filter"/>
 
                 <ImageView
                     android:layout_width="wrap_content"

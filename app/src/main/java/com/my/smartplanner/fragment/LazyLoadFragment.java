@@ -18,9 +18,9 @@ public abstract class LazyLoadFragment extends BaseFragment {
 
     /*在onCreateView方法中执行*/
     @Override
-    protected void initWhenOnCreateView() {
+    protected void initView(Bundle savedInstanceState) {
         isInit = true;
-        LogUtil.d("func", "initWhenOnCreateView()");
+        LogUtil.d("func", "initView()");
     }
 
     /*判断是否可以加载数据, 如果可以便进行数据的加载*/
@@ -91,6 +91,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
         isLoadView = false;
     }
 
+    //异步任务
     static class TryLoadDataAndViewTask extends AsyncTask<Void, Integer, Boolean> {
 
         WeakReference<LazyLoadFragment> fragmentReference;

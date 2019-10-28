@@ -283,6 +283,38 @@
 
         </androidx.cardview.widget.CardView>
 
+        <!--编辑标签-->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            app:cardCornerRadius="2dp"
+            app:contentPaddingLeft="15dp"
+            app:contentPaddingRight="15dp"
+            app:contentPaddingTop="10dp"
+            app:contentPaddingBottom="10dp"
+            android:foreground="?android:attr/selectableItemBackground">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/todo_detail_tag_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:maxLines="1"
+                android:maxLength="100"
+                android:lines="1"
+                android:inputType="text"
+                android:imeOptions="actionDone"
+                android:background="@null"
+                android:layout_margin="2dp"
+                android:hint="@string/add_todo_tag"/>
+
+        </androidx.cardview.widget.CardView>
+
         <!--编辑备注-->
         <androidx.cardview.widget.CardView
             android:id="@+id/todo_detail_note_card_view"
@@ -310,18 +342,6 @@
                 android:layout_margin="2dp"
                 android:hint="@string/add_todo_note"/>
         </androidx.cardview.widget.CardView>
-
-        <!--编辑标签-->
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/todo_detail_tag_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:maxLines="1"
-            android:maxLength="100"
-            android:hint="@string/add_todo_tag"
-            android:visibility="gone"/>
 
     </LinearLayout>
 
