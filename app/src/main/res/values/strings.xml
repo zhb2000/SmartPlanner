@@ -35,4 +35,7 @@
     <string name="complete_time">完成时间</string>
     <string name="not_created_yet">尚未创建</string>
     <string name="not_completed_yet">尚未完成</string>
+    <string name="do_not_use_tag_filter">不使用标签筛选</string>
+    <string name="step_statistic">步数统计</string>
+    <string name="app_using_statistic">App使用统计</string>
 </resources>

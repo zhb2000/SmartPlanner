@@ -9,12 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/ActivityTheme">
-
-        <activity android:name=".activity.TodoDetailActivity"
-            android:launchMode="singleTop"
+        <activity android:name=".activity.StepStatisticActivity"></activity>
+        <activity android:name=".activity.StatisticActivity" />
+        <activity
+            android:name=".activity.TodoDetailActivity"
             android:label="@string/todo_detail_page"
-            android:parentActivityName=".activity.MainActivity"/>
-
+            android:launchMode="singleTop"
+            android:parentActivityName=".activity.MainActivity" />
         <activity
             android:name=".activity.SettingActivity"
             android:label="@string/title_activity_setting"
@@ -25,8 +26,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.my.smartplanner.activity.MainActivity" />
         </activity>
-
-        <activity android:name=".activity.MainActivity"
+        <activity
+            android:name=".activity.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop">
             <intent-filter>
@@ -35,7 +36,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
