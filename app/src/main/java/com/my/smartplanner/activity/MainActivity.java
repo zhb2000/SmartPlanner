@@ -66,15 +66,17 @@ public class MainActivity extends AppCompatActivity {
                         //do something
                         break;
                     case R.id.nav_statistic:
-                        //do something
+                        Intent startStatisticActivityIntent = new Intent(MainActivity.this, StatisticActivity.class);
+                        startActivity(startStatisticActivityIntent);
                         break;
 
                     case R.id.nav_calendar:
                         //do something
                         break;
+
                     case R.id.nav_setting:
-                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                        startActivity(intent);
+                        Intent startSettingActivityIntent = new Intent(MainActivity.this, SettingActivity.class);
+                        startActivity(startSettingActivityIntent);
                         break;
                     case R.id.nav_about:
                         //do something
