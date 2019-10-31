@@ -2,6 +2,7 @@ package com.my.smartplanner.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
 import com.my.smartplanner.MyLayoutAnimationHelper;
 import com.my.smartplanner.R;
+import com.my.smartplanner.activity.ManageTodoTagsActivity;
 import com.my.smartplanner.adapter.TodoItemAdapter;
 import com.my.smartplanner.TodoListItem;
 import com.my.smartplanner.util.CalendarUtil;
@@ -89,10 +91,10 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         todoItemAdapter = new TodoItemAdapter(list);
         todoItemAdapter.setShowCompleted(showCompleted);//对adapter进行设置是否显示已完成
 
-        //TODO 给筛选列表项装填数据
+        //给筛选列表项装填数据
         filterList.clear();
-        filterList.add("不筛选标签");
-
+        filterList.add(mActivity.getString(R.string.do_not_use_tag_filter));
+        //从数据库中读取标签
         TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(getContext(), "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM TodoTag", null);
@@ -147,54 +149,44 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
 
         //筛选器区域
         LinearLayout filterArea = mRootView.findViewById(R.id.todo_page_filter_area);
+        //设置点击筛选器区域的事件
         filterArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mActivity);//对话框
-                dialogBuilder.setView(R.layout.todo_filter_dialog);
-                dialogBuilder.setTitle(mActivity.getString(R.string.filter));//对话框标题
+                dialogBuilder.setView(R.layout.todo_filter_dialog);//设置自定义对话框布局
+                dialogBuilder.setTitle(mActivity.getString(R.string.filter));//设置对话框标题
 
-                //用于记录哪个筛选项被选中的数组
-                /*final boolean[] checkedItems = new boolean[filterList.size()];
-                checkedItems[0] = showCompleted;//初始化“显示已完成”这一项*/
-                //多选事件
-                /*dialog.setMultiChoiceItems(filterList.toArray(new String[0]),
-                        checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                                checkedItems[which] = isChecked;
-                            }
-                        });*/
-
-                /*dialog.setSingleChoiceItems(filterList.toArray(new String[0]), 0, new DialogInterface.OnClickListener() {
+                //设置点击确定按钮的事件
+                dialogBuilder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(mActivity, filterList.get(which), Toast.LENGTH_SHORT).show();
+                        //修改成员变量
+                        filterTag = tempFilterTag;
+                        showCompleted = tempShowCompleted;
+                        todoItemAdapter.setShowCompleted(showCompleted);//给adapter传递消息
+                        SharedPreferences.Editor editor = mActivity.getSharedPreferences(
+                                "todo_preference", Context.MODE_PRIVATE).edit();
+                        editor.putBoolean("show_completed", showCompleted);//存储偏好
+                        editor.apply();
+                        refresh();
                     }
-                });*/
+                });
 
-
-                //点击确定按钮的事件
-                dialogBuilder.setPositiveButton(mActivity.getString(R.string.confirm),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //修改成员变量
-                                filterTag = tempFilterTag;
-                                showCompleted = tempShowCompleted;
-                                todoItemAdapter.setShowCompleted(showCompleted);//给adapter传递消息
-                                SharedPreferences.Editor editor = mActivity.getSharedPreferences(
-                                        "todo_preference", Context.MODE_PRIVATE).edit();
-                                editor.putBoolean("show_completed", showCompleted);//存储偏好
-                                editor.apply();
-                                refresh();
-                            }
-                        });
-                //点击取消按钮的事件
-                dialogBuilder.setNegativeButton(mActivity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                //设置点击取消按钮的事件
+                dialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                });
+
+                //设置管理标签按钮的事件
+                dialogBuilder.setNeutralButton(R.string.manage_todo_tags, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(mActivity, ManageTodoTagsActivity.class);
+                        startActivity(intent);
                     }
                 });
 
@@ -223,7 +215,6 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
                                 tempFilterTag = null;
                             } else {
                                 tempFilterTag = (String) parent.getSelectedItem();
-                                //Toast.makeText(mActivity, tempFilterTag, Toast.LENGTH_SHORT).show();
                             }
                         }
 
