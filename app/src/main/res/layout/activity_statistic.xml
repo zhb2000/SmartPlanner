@@ -11,7 +11,6 @@
 
     <!-- 标题栏AppBarLayout -->
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
@@ -27,7 +26,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!--n内容区域-->
+    <!--内容区域-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -53,9 +52,9 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="100dp"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/step_statistic"
-                    android:layout_weight="1"/>
+                    android:text="@string/step_statistic" />
 
             </LinearLayout>
 
@@ -80,9 +79,9 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="100dp"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/app_using_statistic"
-                    android:layout_weight="1"/>
+                    android:text="@string/app_using_statistic" />
 
             </LinearLayout>
 
