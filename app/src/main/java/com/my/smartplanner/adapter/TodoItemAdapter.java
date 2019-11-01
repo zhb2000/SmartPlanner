@@ -53,7 +53,9 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
         ImageView dateIcon;//日期图标
         ImageView alarmIcon;//闹钟图标
 
-        //ViewHolder的构造函数
+        /**
+         * ViewHolder的构造函数
+         */
         ViewHolder(View view) {
             super(view);
             itemView = view;
