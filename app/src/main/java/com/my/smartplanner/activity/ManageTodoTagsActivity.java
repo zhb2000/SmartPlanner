@@ -34,7 +34,7 @@ public class ManageTodoTagsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_todo_tags);
 
-        recyclerView=findViewById(R.id.manage_todo_tags_activity_recycler_view);
+        recyclerView = findViewById(R.id.manage_todo_tags_activity_recycler_view);
 
         //Toolbar相关操作
         Toolbar toolbar = findViewById(R.id.manage_todo_tags_activity_toolbar);
@@ -56,7 +56,7 @@ public class ManageTodoTagsActivity extends AppCompatActivity {
         }
         cursor.close();
 
-        todoTagItemAdapter=new TodoTagItemAdapter(itemList);
+        todoTagItemAdapter = new TodoTagItemAdapter(itemList);
         recyclerView.setAdapter(todoTagItemAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="68dp"
+    android:layout_height="50dp"
     android:background="@color/white"
     android:orientation="horizontal">
 
@@ -11,14 +11,15 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@mipmap/ic_temp_img_black"
+            android:src="@mipmap/ic_local_offer_black"
+            android:tint="@color/colorPrimary"
             tools:ignore="ContentDescription" />
 
     </LinearLayout>
@@ -30,22 +31,24 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:text="111" />
+        android:textColor="@color/black"
+        android:textSize="15sp"/>
 
     <!--编辑按钮图标区域-->
     <LinearLayout
         android:id="@+id/todo_tag_item_edit_area"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:background="@drawable/water_selector">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@mipmap/ic_temp_img_black"
+            android:src="@mipmap/ic_edit_black"
+            android:tint="@color/grey"
             tools:ignore="ContentDescription" />
 
     </LinearLayout>
@@ -55,15 +58,16 @@
         android:id="@+id/todo_tag_item_delete_area"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:background="@drawable/water_selector">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@mipmap/ic_temp_img_black"
+            android:src="@mipmap/ic_delete_black"
+            android:tint="@color/grey"
             tools:ignore="ContentDescription" />
 
     </LinearLayout>

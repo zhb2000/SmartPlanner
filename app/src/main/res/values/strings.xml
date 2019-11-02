@@ -41,4 +41,6 @@
     <string name="show_has_completed_todo">显示已完成</string>
     <string name="tag_colon">标签:</string>
     <string name="manage_todo_tags">管理标签</string>
+    <string name="confirm_to_delete_todo_tag">确定删除标签吗</string>
+    <string name="delete_todo_tag_message">删除标签并不会删除对应的待办事项</string>
 </resources>
