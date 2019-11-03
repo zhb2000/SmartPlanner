@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_main_page:
                         break;
                     case R.id.nav_tomato:
-                        //do something
+                        Intent startTomatoActivityIntent = new Intent(MainActivity.this,TomatoClockActivity.class);
+                        startActivity(startTomatoActivityIntent);
                         break;
                     case R.id.nav_statistic:
                         Intent startStatisticActivityIntent = new Intent(MainActivity.this, StatisticActivity.class);
@@ -195,13 +196,17 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
-            case R.id.todo_page_refresh:
+            case R.id.todo_page_menu_refresh:
                 todoPageFragment.refresh();
                 break;
-            case R.id.todo_page_add_many:
+            case R.id.todo_page_menu_manage_todo_tag:
+                Intent manageTodoTagsIntent = new Intent(this,ManageTodoTagsActivity.class);
+                startActivity(manageTodoTagsIntent);
+                break;
+            case R.id.todo_page_menu_add_many:
                 addMany();
                 break;
-            case R.id.todo_page_delete_all_todo:
+            case R.id.todo_page_menu_delete_all_todo:
                 deleteALLTodo();
                 break;
         }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--步数统计Activity的布局文件-->
+<!--番茄钟Activity的布局文件-->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,8 +8,7 @@
     android:layout_height="match_parent"
     android:background="@color/light_grey"
     android:fitsSystemWindows="true"
-    tools:context=".activity.StepStatisticActivity">
-
+    tools:context=".activity.TomatoClockActivity">
 
     <!-- 标题栏AppBarLayout -->
     <com.google.android.material.appbar.AppBarLayout
@@ -18,13 +17,13 @@
         android:fitsSystemWindows="true">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/step_statistic_toolbar"
+            android:id="@+id/tomato_clock_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="@string/step_statistic" />
+            app:title="@string/tomato_clock" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

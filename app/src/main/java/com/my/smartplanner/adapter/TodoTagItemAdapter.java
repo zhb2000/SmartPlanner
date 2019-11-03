@@ -128,7 +128,7 @@ public class TodoTagItemAdapter extends RecyclerView.Adapter<TodoTagItemAdapter.
                             if (newTagNameCount > 0) {//新标签已经存在
                                 //发送Toast提示用户
                                 Toast.makeText(mContext, mContext.getString(
-                                        R.string.todo_tag_already_exist), Toast.LENGTH_SHORT).show();
+                                        R.string.todo_tag_already_exist), Toast.LENGTH_LONG).show();
                             } else {//新标签并不存在
                                 //更新TodoTag表中的数据
                                 db.execSQL("UPDATE TodoTag " +

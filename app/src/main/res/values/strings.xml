@@ -47,4 +47,5 @@
     <string name="rename_todo_tag">重命名标签</string>
     <string name="input_new_todo_tag_name">输入标签的新名字</string>
     <string name="todo_tag_already_exist">该标签已经存在</string>
+    <string name="tomato_clock_statistic">番茄钟数据</string>
 </resources>
