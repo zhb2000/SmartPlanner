@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, TodoDetailActivity.class);
                 intent.putExtra("mode", TodoDetailActivity.CREATE_MODE);
                 //startActivity(intent);
-                startActivityForResult(intent, 2);
+                startActivityForResult(intent, 1);
             }
         });
         /*addFab.setOnClickListener(new View.OnClickListener() {
@@ -318,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //TODO 请求码requestCode
-        if (resultCode == RESULT_OK)//有变化
+        if (requestCode == 1 && resultCode == RESULT_OK)//有变化
         {
             if (data != null) {
                 int returnStatus = data.getIntExtra("return_status", 0);
@@ -333,6 +334,8 @@ public class MainActivity extends AppCompatActivity {
                     todoPageFragment.removeItemUpdate(pos);//TODO 更简洁地与Fragment通信
                 }
             }
+        }else{
+            Toast.makeText(this, "other", Toast.LENGTH_SHORT).show();
         }
     }
 

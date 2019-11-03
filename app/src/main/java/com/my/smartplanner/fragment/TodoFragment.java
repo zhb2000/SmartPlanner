@@ -91,7 +91,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         todoItemAdapter = new TodoItemAdapter(list);
         todoItemAdapter.setShowCompleted(showCompleted);//对adapter进行设置是否显示已完成
 
-        getDataFromTagDataBase();//TODO get tag name from tag database
+        getDataFromTagDataBase();
 
         /*//给筛选列表项装填数据
         filterList.clear();

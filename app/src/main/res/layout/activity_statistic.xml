@@ -22,7 +22,7 @@
             android:background="@color/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="@string/nav_statistic" />
+            app:title="@string/statistic" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
