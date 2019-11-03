@@ -3,30 +3,30 @@
     <group android:id="@+id/nav_group1"
         android:checkableBehavior="single">
         <item android:id="@+id/nav_main_page"
-            android:title="@string/nav_home"
+            android:title="@string/home_page"
             android:icon="@mipmap/ic_home_black"/>
 
         <item android:id="@+id/nav_tomato"
-            android:title="@string/nav_tomato"
+            android:title="@string/tomato_clock"
             android:icon="@mipmap/ic_alarm_on_black"/>
 
         <item android:id="@+id/nav_statistic"
-            android:title="@string/nav_statistic"
+            android:title="@string/statistic"
             android:icon="@mipmap/ic_chart_black"/>
 
         <item android:id="@+id/nav_calendar"
-            android:title="@string/nav_calendar"
+            android:title="@string/calendar"
             android:icon="@mipmap/ic_calendar_black"/>
     </group>
 
     <group android:id="@+id/nav_group2"
         android:checkableBehavior="single">
         <item android:id="@+id/nav_setting"
-            android:title="@string/nav_setting"
+            android:title="@string/setting"
             android:icon="@mipmap/ic_settings_applications_outline_black"/>
 
         <item android:id="@+id/nav_about"
-            android:title="@string/nav_about"
+            android:title="@string/about"
             android:icon="@mipmap/ic_info_black"/>
     </group>
 </menu>

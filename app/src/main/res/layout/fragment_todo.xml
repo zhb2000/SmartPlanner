@@ -8,30 +8,32 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:isScrollContainer="true">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <!--头部-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/white"
-            android:orientation="horizontal">
+            android:layout_height="38dp"
+            android:background="@color/light_grey"
+            android:orientation="horizontal"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <!--android:layout_height="50dp"-->
 
             <!--下拉选择框-->
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/todo_page_type_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:gravity="center"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_gravity="center_vertical"
                 android:entries="@array/todo_types"
                 android:dropDownWidth="150dp"
                 android:spinnerMode="dropdown"/>
-            <!--android:theme="@style/TodoTypeSpinner"-->
+            <!--android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"-->
 
             <!--中间占位用-->
             <View
@@ -78,13 +80,13 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/divider_line_grey"/>
+            android:background="@color/light_grey"/>
 
         <!--待办列表-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/todo_list_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 

@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Smart Planner</string>
-    <string name="nav_home">主页</string>
-    <string name="nav_statistic">统计</string>
-    <string name="nav_tomato">番茄钟</string>
-    <string name="nav_calendar">日历</string>
-    <string name="nav_setting">设置</string>
-    <string name="nav_about">关于</string>
+    <string name="home_page">主页</string>
+    <string name="statistic">统计</string>
+    <string name="tomato_clock">番茄钟</string>
+    <string name="calendar">日历</string>
+    <string name="setting">设置</string>
+    <string name="about">关于</string>
     <string name="undo">撤销</string>
     <string name="title_activity_setting">设置</string>
     <string name="today">今天</string>
@@ -14,6 +14,7 @@
     <string name="add_todo_note">添加备注</string>
     <string name="add_todo_title">待办事项标题</string>
     <string name="add_todo_tag">添加标签</string>
+    <string name="add_todo_tag_hint">输入标签，用空格分隔</string>
     <string name="refresh">刷新</string>
     <string name="delete">删除</string>
     <string name="view_detail">查看详情</string>
@@ -41,4 +42,10 @@
     <string name="show_has_completed_todo">显示已完成</string>
     <string name="tag_colon">标签:</string>
     <string name="manage_todo_tags">管理标签</string>
+    <string name="confirm_to_delete_todo_tag">确定删除标签吗</string>
+    <string name="delete_todo_tag_message">删除标签并不会删除对应的待办事项</string>
+    <string name="rename_todo_tag">重命名标签</string>
+    <string name="input_new_todo_tag_name">输入标签的新名字</string>
+    <string name="todo_tag_already_exist">该标签已经存在</string>
+    <string name="tomato_clock_statistic">番茄钟数据</string>
 </resources>

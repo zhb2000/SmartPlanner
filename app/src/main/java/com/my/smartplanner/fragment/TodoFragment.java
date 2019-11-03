@@ -91,7 +91,9 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         todoItemAdapter = new TodoItemAdapter(list);
         todoItemAdapter.setShowCompleted(showCompleted);//对adapter进行设置是否显示已完成
 
-        //给筛选列表项装填数据
+        getDataFromTagDataBase();
+
+        /*//给筛选列表项装填数据
         filterList.clear();
         filterList.add(mActivity.getString(R.string.do_not_use_tag_filter));
         //从数据库中读取标签
@@ -103,7 +105,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
                 filterList.add(cursor.getString(cursor.getColumnIndex("tag_name")));
             } while (cursor.moveToNext());
         }
-        cursor.close();
+        cursor.close();*/
     }
 
     @Override
@@ -332,10 +334,32 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
     }
 
     /**
+     * 从数据库中给筛选列表项装填数据
+     */
+    private void getDataFromTagDataBase() {
+        //给筛选列表项装填数据
+        filterList.clear();
+        filterList.add(mActivity.getString(R.string.do_not_use_tag_filter));
+        //从数据库中读取标签
+        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(getContext(), "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM TodoTag", null);
+        if (cursor.moveToFirst()) {
+            do {
+                filterList.add(cursor.getString(cursor.getColumnIndex("tag_name")));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+    }
+
+    /**
      * 刷新整个List并通知RecyclerView刷新视图
      */
     public void refresh() {
+        //TODO bug
         getDataFromDatabase();
+        getDataFromTagDataBase();
+        //loadData();
         todoItemAdapter.notifyDataSetChanged();
         todoListRecyclerView.scheduleLayoutAnimation();
     }
@@ -368,6 +392,9 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         cursor.close();
 
         todoItemAdapter.notifyItemChanged(listIndex);
+
+        //更新标签的数据
+        getDataFromTagDataBase();//TODO 异步加载数据
     }
 
     /**
