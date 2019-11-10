@@ -27,6 +27,7 @@ import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.fragment.TodoFragment;
 import com.my.smartplanner.adapter.ViewPagerAdapter;
+import com.my.smartplanner.util.LogUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -323,12 +324,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //TODO 请求码requestCode
         if (requestCode == 1 && resultCode == RESULT_OK)//有变化
         {
             if (data != null) {
                 int returnStatus = data.getIntExtra("return_status", 0);
                 if (returnStatus == TodoDetailActivity.RETURN_STATUS_ADD_NEW) {//新增
+                    LogUtil.d("old_phone","main activity get refresh msg");
                     todoPageFragment.refresh();
                 } else if (returnStatus == TodoDetailActivity.RETURN_STATUS_CHANGE_ITEM) {//修改
                     int listIndex = data.getIntExtra("list_index", 0);
@@ -340,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }else{
-            Toast.makeText(this, "other", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "other", Toast.LENGTH_SHORT).show();//TODO
         }
     }
 

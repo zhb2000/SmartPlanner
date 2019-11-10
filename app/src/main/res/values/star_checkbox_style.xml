@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--更改星标复选框样式，改成星形-->
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="starCheckboxStyle" parent="Theme.AppCompat.Light">
         <item name="android:button">@drawable/star_checkbox_style</item>
+        <item name="checkboxStyle">@drawable/star_checkbox_style</item>
         <item name="colorAccent">@color/blue</item>
     </style>
 </resources>

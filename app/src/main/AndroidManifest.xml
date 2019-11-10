@@ -9,14 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/ActivityTheme">
-        <activity android:name=".activity.TomatoClockStatisticActivity"></activity>
-        <activity android:name=".activity.TomatoClockActivity" /> <!-- 管理标签 -->
+        <activity android:name=".activity.TomatoClockStatisticActivity" />
+        <activity android:name=".activity.TomatoClockActivity" />
         <activity
             android:name=".activity.ManageTodoTagsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:launchMode="singleTop" /> <!-- 步数统计 -->
-        <activity android:name=".activity.StepStatisticActivity" /> <!-- 统计 -->
-        <activity android:name=".activity.StatisticActivity" /> <!-- 待办详情 -->
+            android:launchMode="singleTop" />
+        <activity android:name=".activity.StepStatisticActivity" />
+        <activity android:name=".activity.StatisticActivity" />
         <activity
             android:name=".activity.TodoDetailActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -32,7 +32,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.my.smartplanner.activity.MainActivity" />
-        </activity> <!-- 主页 -->
+        </activity>
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

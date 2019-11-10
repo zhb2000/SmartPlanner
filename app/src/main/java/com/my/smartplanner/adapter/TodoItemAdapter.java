@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,11 +88,17 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
         if (mContext == null) {
             mContext = parent.getContext();
         }
+
+        //return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.todo_list_item,parent,false));
+
         //打开数据库
         TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(mContext, "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
         db = dbHelper.getWritableDatabase();
+
         //进行视图相关的操作
-        View view = LayoutInflater.from(mContext).inflate(R.layout.todo_list_item, parent, false);
+        LogUtil.d("old_phone","before inflate ok");
+        View view = LayoutInflater.from(mContext).inflate(R.layout.todo_list_item, parent, false);//TODO old phone BUG
+        LogUtil.d("old_phone","onCreateViewHolder inflate ok");
         final ViewHolder holder = new ViewHolder(view);
         //设置完成复选框的点击事件
         holder.completeCheckBox.setOnClickListener(new View.OnClickListener() {

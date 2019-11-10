@@ -499,6 +499,8 @@ public class TodoDetailActivity extends AppCompatActivity {
                 values.put("alarm", alarmString);
                 db.insert("TodoList", null, values);
 
+                LogUtil.d("old_phone","db update successful");
+
                 intent.putExtra("return_status", RETURN_STATUS_ADD_NEW);//新增
                 setResult(RESULT_OK, intent);
             } else {
