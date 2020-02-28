@@ -1,6 +1,5 @@
 package com.my.smartplanner.adapter;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -20,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
 import com.my.smartplanner.R;
-import com.my.smartplanner.TodoTagListItem;
+import com.my.smartplanner.Item.TodoTagListItem;
 
 import java.util.List;
 

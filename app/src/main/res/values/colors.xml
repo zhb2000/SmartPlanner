@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--颜色资源-->
 <resources>
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#3948a3</color>

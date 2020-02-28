@@ -13,7 +13,6 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -26,7 +25,7 @@ import com.my.smartplanner.MyLayoutAnimationHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.activity.ManageTodoTagsActivity;
 import com.my.smartplanner.adapter.TodoItemAdapter;
-import com.my.smartplanner.TodoListItem;
+import com.my.smartplanner.Item.TodoListItem;
 import com.my.smartplanner.util.CalendarUtil;
 import com.my.smartplanner.util.LogUtil;
 

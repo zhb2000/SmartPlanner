@@ -1,4 +1,4 @@
-package com.my.smartplanner;
+package com.my.smartplanner.Item;
 
 import androidx.annotation.Nullable;
 

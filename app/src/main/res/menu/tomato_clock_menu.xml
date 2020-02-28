@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--番茄钟页面菜单-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/tomato_clock_menu_statistic"
         android:title="@string/tomato_clock_statistic"/>

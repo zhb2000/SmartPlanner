@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--待办详情菜单-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/todo_detail_menu_delete"
         android:title="@string/delete"/>

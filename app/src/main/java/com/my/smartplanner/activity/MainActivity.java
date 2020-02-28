@@ -36,12 +36,18 @@ import java.util.List;
 /*主页的Activity*/
 public class MainActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;//标题栏
-    private DrawerLayout mDrawerLayout;//滑动抽屉
+    private Toolbar toolbar;
+    /**
+     * 滑动抽屉
+     */
+    private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private FloatingActionButton addFab;//添加待办浮动按钮
+    /**
+     * 添加待办浮动按钮
+     */
+    private FloatingActionButton addFab;
 
     //TODO 怎样更好地获取fragment的实例
     private TodoFragment todoFragment1;
@@ -65,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_main_page:
                         break;
                     case R.id.nav_tomato:
-                        Intent startTomatoActivityIntent = new Intent(MainActivity.this,TomatoClockActivity.class);
+                        Intent startTomatoActivityIntent = new Intent(MainActivity.this, TomatoClockActivity.class);
                         startActivity(startTomatoActivityIntent);
                         break;
                     case R.id.nav_statistic:
@@ -201,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 todoPageFragment.refresh();
                 break;
             case R.id.todo_page_menu_manage_todo_tag:
-                Intent manageTodoTagsIntent = new Intent(this,ManageTodoTagsActivity.class);
+                Intent manageTodoTagsIntent = new Intent(this, ManageTodoTagsActivity.class);
                 startActivity(manageTodoTagsIntent);
                 break;
             case R.id.todo_page_menu_add_many:
@@ -329,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
             if (data != null) {
                 int returnStatus = data.getIntExtra("return_status", 0);
                 if (returnStatus == TodoDetailActivity.RETURN_STATUS_ADD_NEW) {//新增
-                    LogUtil.d("old_phone","main activity get refresh msg");
+                    LogUtil.d("old_phone", "main activity get refresh msg");
                     todoPageFragment.refresh();
                 } else if (returnStatus == TodoDetailActivity.RETURN_STATUS_CHANGE_ITEM) {//修改
                     int listIndex = data.getIntExtra("list_index", 0);
@@ -340,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
                     todoPageFragment.removeItemUpdate(pos);//TODO 更简洁地与Fragment通信
                 }
             }
-        }else{
+        } else {
             //Toast.makeText(this, "other", Toast.LENGTH_SHORT).show();//TODO
         }
     }

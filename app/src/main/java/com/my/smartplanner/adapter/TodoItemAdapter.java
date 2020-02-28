@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.activity.TodoDetailActivity;
-import com.my.smartplanner.TodoListItem;
+import com.my.smartplanner.Item.TodoListItem;
 import com.my.smartplanner.util.CalendarUtil;
 import com.my.smartplanner.util.LogUtil;
 

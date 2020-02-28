@@ -14,7 +14,7 @@ import android.view.MenuItem;
 
 import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
 import com.my.smartplanner.R;
-import com.my.smartplanner.TodoTagListItem;
+import com.my.smartplanner.Item.TodoTagListItem;
 import com.my.smartplanner.adapter.TodoTagItemAdapter;
 
 import java.util.LinkedList;

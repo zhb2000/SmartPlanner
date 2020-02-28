@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="match_parent"
+<!--侧边栏头部布局-->
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="180dp"
     android:background="?attr/colorPrimary"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -9,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@mipmap/nav_header_pic"/>
+        android:src="@mipmap/nav_header_pic"
+        tools:ignore="ContentDescription" />
 
 </RelativeLayout>
