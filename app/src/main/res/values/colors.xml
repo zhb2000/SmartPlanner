@@ -15,4 +15,7 @@
     <color name="water_selector_pressed">#c1c1c2</color>
     <color name="water_selector_focus">#c1c1c2</color>
     <color name="water_selector_background">#ffffff</color>
+    <color name="work_tomato_color">#ff5722</color>
+    <color name="rest_tomato_color">#6cb100</color>
+    <color name="count_tomato_color">#3f51b5</color>
 </resources>

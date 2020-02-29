@@ -2,13 +2,16 @@ package com.my.smartplanner.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.my.smartplanner.R;
+import com.my.smartplanner.util.CalendarUtil;
 
 import cn.iwgang.countdownview.CountdownView;
 
@@ -35,22 +38,35 @@ public class TomatoClockOngoingActivity extends AppCompatActivity {
     private String title;
 
     /**
-     * 当前第几个工作时间段
+     * 已完成的工作时段数目
      */
     private int workCnt;
     /**
-     * 当前第几个休息时间段
+     * 已完成的休息时间段数目
      */
     private int restCnt;
     /**
      * 当前是否为工作时间段
      */
-    private boolean isWork;
+    private boolean isAtWork;
+    /**
+     * 工作总时长（分钟）
+     */
+    private int workTimeSum;
+    /**
+     * 休息总时长（分钟）
+     */
+    private int restTimeSum;
 
     private static final String WORK_LEN_EXTRA_NAME = "workLen";
     private static final String REST_LEN_EXTRA_NAME = "restLen";
     private static final String CLOCK_CNT_EXTRA_NAME = "clockCnt";
     private static final String TITLE_EXTRA_NAME = "title";
+
+    /**
+     * 倒计时组件
+     */
+    private CountdownView countdownView;
 
     /**
      * 启动番茄钟计时Activity
@@ -71,6 +87,20 @@ public class TomatoClockOngoingActivity extends AppCompatActivity {
     }
 
     /**
+     * 获取已经走了多少分钟
+     *
+     * @param countdown 倒计时控件
+     * @param setMinute 设置的倒计时分钟数
+     * @return 已经走的分钟数
+     */
+    private static int hasGoneMinute(CountdownView countdown, int setMinute) {
+        long setMilli = setMinute * 60 * 1000;
+        long remainMilli = countdown.getRemainTime();
+        long goneMinute = (setMilli - remainMilli) / 1000 / 60;
+        return (int) goneMinute;
+    }
+
+    /**
      * 从Intent中取出工作时长、休息时长、番茄钟个数、番茄钟标题
      */
     private void getTheExtra() {
@@ -81,33 +111,91 @@ public class TomatoClockOngoingActivity extends AppCompatActivity {
         title = intent.getStringExtra(TITLE_EXTRA_NAME);
     }
 
+    /**
+     * <p>番茄钟开始</p>
+     * <p>将工作次数、休息次数、工作时长、休息时长置零</p>
+     * <p>切换到工作模式，开始工作计时</p>
+     */
     private void startTomato() {
         workCnt = 0;
         restCnt = 0;
-        isWork = true;
+        workTimeSum = 0;
+        restTimeSum = 0;
+        isAtWork = true;
+        countdownView.start(CalendarUtil.minuteToMillisecond(workLen));
     }
 
+    /**
+     * 计时器到时的回调函数，切换工作/休息，或成功结束
+     */
     private void switchStatus() {
-        if (workCnt == clockCount && restCnt == clockCount - 1) {
-
-        }
-        if (isWork) {
-            //之前工作，现在切换到休息
-        } else {
-            //之前休息，现在切换到工作
+        if (isAtWork) {//之前工作，现在切换到休息
+            workCnt++;//已完成工作 + 1
+            workTimeSum += workLen;//工作时长增加一整段
+            if (workCnt == clockCount) {
+                tomatoSuccessful();
+            } else {
+                isAtWork = false;//切换到休息模式
+                //休息计时开始
+                countdownView.start(CalendarUtil.minuteToMillisecond(restLen));
+            }
+        } else {//之前休息，现在切换到工作
+            restCnt++;//已完成休息 + 1
+            restTimeSum += restLen;//休息时长增加一整段
+            isAtWork = true;//切换到工作模式
+            //工作计时开始
+            countdownView.start(CalendarUtil.minuteToMillisecond(workLen));
         }
     }
 
+    /**
+     * 跳过休息时调用
+     */
+    private void skipRest() {
+        if (!isAtWork) {
+            restCnt++;//已完成休息 + 1
+            restTimeSum += hasGoneMinute(countdownView, restLen);//休息时长增加一部分
+            isAtWork = true;//切换到工作模式
+            // 工作计时开始
+            countdownView.start(CalendarUtil.minuteToMillisecond(workLen));
+        }
+    }
+
+    /**
+     * 成功结束时调用
+     */
     private void tomatoSuccessful() {
-
+        int allTimeSum = workTimeSum + restTimeSum;
+        super.onBackPressed();
     }
 
-    private void tomatoFail(){
-
+    /**
+     * <p>失败结束时调用</p>
+     * <p>在按下返回键时调用</p>
+     */
+    private void tomatoFail() {
+        //修改工作总时长/休息总时长
+        if (isAtWork) {
+            workTimeSum += hasGoneMinute(countdownView, workLen);
+        } else {
+            restTimeSum += hasGoneMinute(countdownView, restLen);
+        }
+        if (workTimeSum < 1) {//工作时长小于1分钟，时长过短的失败
+            tomatoTooShort();
+        } else {
+            int allTimeSum = workTimeSum + restTimeSum;
+            Toast.makeText(this, "失败，总时长：" + allTimeSum, Toast.LENGTH_LONG).show();
+            super.onBackPressed();
+        }
     }
 
-    private void tomatoTooShort(){
-
+    /**
+     * <p>失败但时长过短时调用</p>
+     * <p>在tomatoFail()中调用</p>
+     */
+    private void tomatoTooShort() {
+        Toast.makeText(this, getString(R.string.tomato_too_short_msg), Toast.LENGTH_SHORT).show();
+        super.onBackPressed();
     }
 
     @Override
@@ -116,19 +204,43 @@ public class TomatoClockOngoingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tomato_clock_ongoing);
 
         getTheExtra();
+        TextView titleTextView = findViewById(R.id.tomato_clock_ongoing_title);
+        countdownView = findViewById(R.id.tomato_clock_ongoing_countdown);
 
         //title textview
-        TextView titleTextView = findViewById(R.id.tomato_clock_ongoing_title);
         titleTextView.setText(title);
-
         //countdown test
-        CountdownView countdownView = findViewById(R.id.tomato_clock_ongoing_countdown);
         countdownView.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
             @Override
             public void onEnd(CountdownView cv) {
-                //TODO
+                switchStatus();
             }
         });
-        countdownView.start(5000);
+
+        startTomato();
+    }
+
+    /**
+     * 按下返回键
+     */
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle(R.string.confirm_to_give_up);//设置对话框标题
+        dialogBuilder.setMessage(R.string.give_up_tomato_msg);//设置对话框消息
+        //设置对话框“放弃”按钮
+        dialogBuilder.setPositiveButton(R.string.give_up, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                tomatoFail();
+            }
+        });
+        //设置对话框“取消”按钮
+        dialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        dialogBuilder.show();
     }
 }

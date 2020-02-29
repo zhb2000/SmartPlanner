@@ -48,4 +48,15 @@
     <string name="input_new_todo_tag_name">输入标签的新名字</string>
     <string name="todo_tag_already_exist">该标签已经存在</string>
     <string name="tomato_clock_statistic">番茄钟数据</string>
+    <string name="confirm_to_give_up">确定要放弃吗</string>
+    <string name="give_up">放弃</string>
+    <string name="give_up_tomato_msg">您确定要放弃吗？</string>
+    <string name="tomato_too_short_msg">番茄钟时长过短，将不计入记录</string>
+    <string name="tomato_default_title">番茄钟</string>
+    <string name="single_work_len">单次工作时长</string>
+    <string name="single_rest_len">单次休息时长</string>
+    <string name="clock_count">重复次数</string>
+    <string name="minute">分钟</string>
+    <string name="start">开始</string>
+    <string name="default_word">默认</string>
 </resources>
