@@ -258,6 +258,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:drawableLeft="@drawable/ic_play_arrow_24dp"
+                        android:paddingHorizontal="50dp"
                         android:text="@string/start" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

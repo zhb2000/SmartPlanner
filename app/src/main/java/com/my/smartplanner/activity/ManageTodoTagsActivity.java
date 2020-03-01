@@ -90,7 +90,7 @@ public class ManageTodoTagsActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            Toast.makeText(weakActivity.get(), "开始加载", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(weakActivity.get(), "开始加载", Toast.LENGTH_SHORT).show();
         }
 
         @Override
