@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.my.smartplanner.DatabaseHelper.TomatoDBHelper;
 import com.my.smartplanner.adapter.TomatoHistoryItemAdapter;
@@ -18,6 +20,7 @@ import com.my.smartplanner.item.TomatoHistoryListItem;
 import com.my.smartplanner.R;
 import com.my.smartplanner.util.DBUtil;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +78,38 @@ public class TomatoHistoryActivity extends AppCompatActivity {
     }
 
     /**
+     * 加载数据异步任务类
+     */
+    private static class LoadTask extends AsyncTask<Void, Integer, Boolean> {
+        private final WeakReference<TomatoHistoryActivity> weakActivity;
+
+        LoadTask(TomatoHistoryActivity activity) {
+            this.weakActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            //Toast.makeText(weakActivity.get(), "开始加载", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            weakActivity.get().fillList();
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                TomatoHistoryActivity activity = weakActivity.get();
+                if (!(activity == null || activity.isFinishing())) {
+                    activity.recyclerViewSetting();
+                }
+            }
+        }
+    }
+
+    /**
      * 设置RecyclerView
      */
     private void recyclerViewSetting() {
@@ -90,8 +125,9 @@ public class TomatoHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tomato_history);
         findViews();
         toolbarSetting();
-        fillList();
-        recyclerViewSetting();
+        new LoadTask(this).execute();
+        //fillList();
+        //recyclerViewSetting();
     }
 
     /**
