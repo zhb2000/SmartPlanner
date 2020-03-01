@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -278,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(activityReference.get(), "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+            TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(activityReference.get());
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             db.execSQL("DELETE FROM TodoList");
             return true;
@@ -306,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(activityReference.get(), "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+            TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(activityReference.get());
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             for (int i = 1; i <= 50; i++) {
                 db.execSQL("INSERT INTO TodoList (title,is_complete,is_star,alarm,note,date,create_time) " +

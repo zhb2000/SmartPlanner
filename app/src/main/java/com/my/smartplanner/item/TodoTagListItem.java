@@ -1,4 +1,4 @@
-package com.my.smartplanner.Item;
+package com.my.smartplanner.item;
 
 public class TodoTagListItem {
     private String tagName;

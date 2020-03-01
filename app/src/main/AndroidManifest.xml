@@ -9,8 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/ActivityTheme">
-        <activity android:name=".activity.TomatoClockOngoingActivity" />
-        <activity android:name=".activity.TomatoClockStatisticActivity" />
+        <activity android:name=".activity.TomatoOngoingActivity" />
+        <activity android:name=".activity.TomatoHistoryActivity" />
         <activity android:name=".activity.TomatoClockActivity" />
         <activity
             android:name=".activity.ManageTodoTagsActivity"

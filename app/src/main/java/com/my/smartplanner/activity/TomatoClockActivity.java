@@ -14,10 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.my.smartplanner.R;
-import com.my.smartplanner.util.LogUtil;
 import com.warkiz.widget.IndicatorSeekBar;
 import com.warkiz.widget.OnSeekChangeListener;
 import com.warkiz.widget.SeekParams;
@@ -89,7 +87,7 @@ public class TomatoClockActivity extends AppCompatActivity {
                     title = titleEditText.getText().toString();
                 }
                 //Toast.makeText(TomatoClockActivity.this, "work:" + workLen + " rest:" + restLen + " count:" + count, Toast.LENGTH_SHORT).show();
-                TomatoClockOngoingActivity.startTheActivity(
+                TomatoOngoingActivity.startTheActivity(
                         TomatoClockActivity.this, workLen, restLen, clockCnt, title);
             }
         });
@@ -195,7 +193,7 @@ public class TomatoClockActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.tomato_clock_menu_statistic://点击“番茄钟数据”菜单项
-                Intent intent = new Intent(this, TomatoClockStatisticActivity.class);
+                Intent intent = new Intent(this, TomatoHistoryActivity.class);
                 startActivity(intent);
                 break;
         }

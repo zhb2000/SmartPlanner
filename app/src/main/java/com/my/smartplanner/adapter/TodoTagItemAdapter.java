@@ -19,22 +19,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
 import com.my.smartplanner.R;
-import com.my.smartplanner.Item.TodoTagListItem;
+import com.my.smartplanner.item.TodoTagListItem;
 
 import java.util.List;
 
+/**
+ * TodoTagItem的Adapter
+ */
 public class TodoTagItemAdapter extends RecyclerView.Adapter<TodoTagItemAdapter.ViewHolder> {
-
-    private Context mContext;//上下文
-    private List<TodoTagListItem> todoTagListItems;//装有标签名字的List
-    private SQLiteDatabase db;//TodoDatabase.db数据库，里面有TodoList表和TodoTag表
-
-    // 重命名对话框的自定义视图的输入框控件
-    // 为了方便在匿名类中修改所以弄成了成员变量
+    /**
+     * 上下文
+     */
+    private Context mContext;
+    /**
+     * 装有标签名字的List
+     */
+    private List<TodoTagListItem> todoTagListItems;
+    /**
+     * TodoDatabase.db数据库，里面有TodoList表和TodoTag表
+     */
+    private SQLiteDatabase db;
+    /**
+     * <p>重命名对话框的自定义视图的输入框控件</p>
+     * <p>为了方便在匿名类中修改所以弄成了成员变量</p>
+     */
     private EditText renameEditText;
 
     /**
-     * 内部类ViewHolder
+     * static内部类ViewHolder
      */
     static class ViewHolder extends RecyclerView.ViewHolder {
         View itemView;//最外层的布局
@@ -77,12 +89,11 @@ public class TodoTagItemAdapter extends RecyclerView.Adapter<TodoTagItemAdapter.
         }
 
         //打开数据库
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(mContext, "TodoDatabase.db",
-                null, TodoDatabaseHelper.NOW_VERSION);
+        TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(mContext);
         db = dbHelper.getWritableDatabase();
 
         //进行视图相关的操作
-        View view = LayoutInflater.from(mContext).inflate(R.layout.todo_tag_item,
+        View view = LayoutInflater.from(mContext).inflate(R.layout.li_todo_tag_item,
                 parent, false);//为该列表项加载布局
         final ViewHolder holder = new ViewHolder(view);//创建ViewHolder
 
@@ -100,7 +111,7 @@ public class TodoTagItemAdapter extends RecyclerView.Adapter<TodoTagItemAdapter.
                 //创建对话框
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
                 dialogBuilder.setTitle(R.string.rename_todo_tag);//设置对话框标题
-                dialogBuilder.setView(R.layout.rename_todo_tag_dialog);//设置对话框自定义布局
+                dialogBuilder.setView(R.layout.dialog_rename_todo_tag);//设置对话框自定义布局
 
                 //设置确定按钮的事件
                 dialogBuilder.setPositiveButton(R.string.confirm,

@@ -14,7 +14,7 @@ import android.view.MenuItem;
 
 import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
 import com.my.smartplanner.R;
-import com.my.smartplanner.Item.TodoTagListItem;
+import com.my.smartplanner.item.TodoTagListItem;
 import com.my.smartplanner.adapter.TodoTagItemAdapter;
 
 import java.util.LinkedList;
@@ -26,25 +26,33 @@ import java.util.List;
 public class ManageTodoTagsActivity extends AppCompatActivity {
 
     private List<TodoTagListItem> itemList = new LinkedList<>();
-    private TodoTagItemAdapter todoTagItemAdapter;
     private RecyclerView recyclerView;
+    private Toolbar toolbar;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_todo_tags);
-
+    /**
+     * 获取控件实例
+     */
+    private void findViews() {
         recyclerView = findViewById(R.id.manage_todo_tags_activity_recycler_view);
+        toolbar = findViewById(R.id.manage_todo_tags_activity_toolbar);
+    }
 
-        //Toolbar相关操作
-        Toolbar toolbar = findViewById(R.id.manage_todo_tags_activity_toolbar);
+    /**
+     * 设置Toolbar
+     */
+    private void toolbarSetting() {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+    }
 
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(this, "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+    /**
+     * 装填List
+     */
+    private void fillList() {
+        TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(this);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM TodoTag", null);
         if (cursor.moveToFirst()) {
@@ -55,12 +63,26 @@ public class ManageTodoTagsActivity extends AppCompatActivity {
             } while (cursor.moveToNext());
         }
         cursor.close();
+    }
 
-        todoTagItemAdapter = new TodoTagItemAdapter(itemList);
+    /**
+     * 设置RecyclerView
+     */
+    private void recyclerViewSetting() {
+        TodoTagItemAdapter todoTagItemAdapter = new TodoTagItemAdapter(itemList);
         recyclerView.setAdapter(todoTagItemAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_manage_todo_tags);
+        findViews();
+        toolbarSetting();
+        fillList();
+        recyclerViewSetting();
     }
 
     /**
@@ -68,12 +90,8 @@ public class ManageTodoTagsActivity extends AppCompatActivity {
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home://点击返回的箭头
-                finish();
-                break;
-            default:
-                break;
+        if (item.getItemId() == android.R.id.home) {//点击返回的箭头
+            super.onBackPressed();
         }
         return true;
     }

@@ -18,7 +18,7 @@ import cn.iwgang.countdownview.CountdownView;
 /**
  * 番茄钟计时
  */
-public class TomatoClockOngoingActivity extends AppCompatActivity {
+public class TomatoOngoingActivity extends AppCompatActivity {
 
     /**
      * 工作时间长度（分钟）
@@ -78,7 +78,7 @@ public class TomatoClockOngoingActivity extends AppCompatActivity {
      * @param title          番茄钟标题
      */
     public static void startTheActivity(Context packageContext, int workLen, int restLen, int count, String title) {
-        Intent intent = new Intent(packageContext, TomatoClockOngoingActivity.class);
+        Intent intent = new Intent(packageContext, TomatoOngoingActivity.class);
         intent.putExtra(WORK_LEN_EXTRA_NAME, workLen);
         intent.putExtra(REST_LEN_EXTRA_NAME, restLen);
         intent.putExtra(CLOCK_CNT_EXTRA_NAME, count);
@@ -201,7 +201,7 @@ public class TomatoClockOngoingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tomato_clock_ongoing);
+        setContentView(R.layout.activity_tomato_ongoing);
 
         getTheExtra();
         TextView titleTextView = findViewById(R.id.tomato_clock_ongoing_title);

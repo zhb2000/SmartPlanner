@@ -27,7 +27,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
@@ -94,7 +93,7 @@ public class TodoDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_todo_detail);
 
         //打开数据库
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(TodoDetailActivity.this, "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+        TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(TodoDetailActivity.this);
         db = dbHelper.getWritableDatabase();
         //从intent中提取数据
         Intent intent = getIntent();
