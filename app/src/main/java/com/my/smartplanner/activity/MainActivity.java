@@ -17,16 +17,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.jaeger.library.StatusBarUtil;
-import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
+import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.fragment.TodoFragment;
 import com.my.smartplanner.adapter.ViewPagerAdapter;
+import com.my.smartplanner.util.LogUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -35,12 +35,18 @@ import java.util.List;
 /*主页的Activity*/
 public class MainActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;//标题栏
-    private DrawerLayout mDrawerLayout;//滑动抽屉
+    private Toolbar toolbar;
+    /**
+     * 滑动抽屉
+     */
+    private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private FloatingActionButton addFab;//添加待办浮动按钮
+    /**
+     * 添加待办浮动按钮
+     */
+    private FloatingActionButton addFab;
 
     //TODO 怎样更好地获取fragment的实例
     private TodoFragment todoFragment1;
@@ -64,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_main_page:
                         break;
                     case R.id.nav_tomato:
-                        Intent startTomatoActivityIntent = new Intent(MainActivity.this,TomatoClockActivity.class);
+                        Intent startTomatoActivityIntent = new Intent(MainActivity.this, TomatoClockActivity.class);
                         startActivity(startTomatoActivityIntent);
                         break;
                     case R.id.nav_statistic:
@@ -200,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 todoPageFragment.refresh();
                 break;
             case R.id.todo_page_menu_manage_todo_tag:
-                Intent manageTodoTagsIntent = new Intent(this,ManageTodoTagsActivity.class);
+                Intent manageTodoTagsIntent = new Intent(this, ManageTodoTagsActivity.class);
                 startActivity(manageTodoTagsIntent);
                 break;
             case R.id.todo_page_menu_add_many:
@@ -271,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(activityReference.get(), "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+            TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(activityReference.get());
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             db.execSQL("DELETE FROM TodoList");
             return true;
@@ -299,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(activityReference.get(), "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+            TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(activityReference.get());
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             for (int i = 1; i <= 50; i++) {
                 db.execSQL("INSERT INTO TodoList (title,is_complete,is_star,alarm,note,date,create_time) " +
@@ -323,12 +329,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //TODO 请求码requestCode
         if (requestCode == 1 && resultCode == RESULT_OK)//有变化
         {
             if (data != null) {
                 int returnStatus = data.getIntExtra("return_status", 0);
                 if (returnStatus == TodoDetailActivity.RETURN_STATUS_ADD_NEW) {//新增
+                    LogUtil.d("old_phone", "main activity get refresh msg");
                     todoPageFragment.refresh();
                 } else if (returnStatus == TodoDetailActivity.RETURN_STATUS_CHANGE_ITEM) {//修改
                     int listIndex = data.getIntExtra("list_index", 0);
@@ -339,8 +345,8 @@ public class MainActivity extends AppCompatActivity {
                     todoPageFragment.removeItemUpdate(pos);//TODO 更简洁地与Fragment通信
                 }
             }
-        }else{
-            Toast.makeText(this, "other", Toast.LENGTH_SHORT).show();
+        } else {
+            //Toast.makeText(this, "other", Toast.LENGTH_SHORT).show();//TODO
         }
     }
 

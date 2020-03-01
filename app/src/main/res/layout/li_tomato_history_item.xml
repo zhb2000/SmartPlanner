@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><!--番茄钟历史记录列表项布局-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp">
+    <TextView
+        android:id="@+id/li_tomato_history_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/li_tomato_history_start_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/li_tomato_history_time_sum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

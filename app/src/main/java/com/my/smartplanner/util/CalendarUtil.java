@@ -1,5 +1,7 @@
 package com.my.smartplanner.util;
 
+import androidx.annotation.NonNull;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -9,20 +11,38 @@ import java.util.Date;
  * 日期转换等工具
  */
 public class CalendarUtil {
+    /**
+     * 返回值：日期是昨天
+     */
     public static final int DATE_LOCATION_YESTERDAY = -1;
+    /**
+     * 返回值：日期是今天
+     */
     public static final int DATE_LOCATION_TODAY = 0;
+    /**
+     * 返回值：日期是明天
+     */
     public static final int DATE_LOCATION_TOMORROW = 1;
+    /**
+     * 返回值：日期比昨天还要早
+     */
     public static final int DATE_LOCATION_LONG_BEFORE = -2;
+    /**
+     * 返回值：日期比明天还要晚
+     */
     public static final int DATE_LOCATION_LONG_AFTER = 2;
 
     /**
      * 检测某个日期相对于今天的关系
      *
      * @param calendar 需要检测的日期
-     * @return 该日期是昨天，返回-1；是今天，返回0；是明天，返回1；
-     * 都不是且在之前，返回-2；都不是且在之后，返回2
+     * @return <p>比昨天还要早: DATE_LOCATION_LONG_BEFORE</p>
+     * <p>昨天: DATE_LOCATION_YESTERDAY</p>
+     * <p>今天: DATE_LOCATION_TODAY</p>
+     * <p>明天: DATE_LOCATION_TOMORROW</p>
+     * <p>比明天还要晚: DATE_LOCATION_LONG_AFTER</p>
      */
-    public static int dateLocation(Calendar calendar) {
+    public static int dateLocation(@NonNull Calendar calendar) {
         Calendar todayCalendar = Calendar.getInstance();
         todayCalendar.setTime(new Date());
         Calendar yesterdayCalendar = Calendar.getInstance();
@@ -51,16 +71,29 @@ public class CalendarUtil {
         }
     }
 
-    public static final int DATE_COMPARE_SAME = 0;
-    public static final int DATE_COMPARE_AFTER = 1;
-    public static final int DATE_COMPARE_BEFORE = -1;
     /**
-     * 比较两个日期的先后
+     * 返回值：相同
+     */
+    public static final int DATE_COMPARE_SAME = 0;
+    /**
+     * 返回值：date1在前，date2在后
+     */
+    public static final int DATE_COMPARE_AFTER = 1;
+    /**
+     * 返回值：date2在前，date1在后
+     */
+    public static final int DATE_COMPARE_BEFORE = -1;
+
+    /**
+     * 比较两个日期的先后，只比较到日
      *
-     * @return
-     * date1在后，返回1，相同，返回0，date1在前，返回-1。只比较到日
-     * */
-    public static int dateCompare(Calendar date1, Calendar date2) {
+     * @param date1 日期1
+     * @param date2 日期2
+     * @return <p>相同: DATE_COMPARE_SAME</p>
+     * <p>date1在前，date2在后: DATE_COMPARE_AFTER</p>
+     * <p>date2在前，date1在后: DATE_COMPARE_BEFORE</p>
+     */
+    public static int dateCompare(@NonNull Calendar date1, @NonNull Calendar date2) {
         int day1 = date1.get(Calendar.DATE);
         int day2 = date2.get(Calendar.DATE);
         int month1 = date1.get(Calendar.MONTH);
@@ -86,10 +119,10 @@ public class CalendarUtil {
      * Calendar对象转换成String
      *
      * @param calendar 被转换的Calendar对象
-     * @param pattern 指定格式化方式
+     * @param pattern  指定格式化方式
      * @return 转换出的String字符串
-     * */
-    public static String calendarToString(Calendar calendar, String pattern) {
+     */
+    public static String calendarToString(@NonNull Calendar calendar, @NonNull String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(calendar.getTime());
     }
@@ -97,10 +130,10 @@ public class CalendarUtil {
     /**
      * String转换成Calendar
      *
-     * @param string 被转换的String字符串
+     * @param string  被转换的String字符串
      * @param pattern 指定格式化方式
      * @return 转换出的Calendar对象
-     * */
+     */
     public static Calendar stringToCalendar(String string, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         Date date = null;
@@ -114,5 +147,15 @@ public class CalendarUtil {
             calendar.setTime(date);
         }
         return calendar;
+    }
+
+    /**
+     * 把分钟转换为毫秒
+     *
+     * @param minute 分钟数
+     * @return 毫秒数
+     */
+    public static long minuteToMillisecond(int minute) {
+        return minute * 60 * 1000;
     }
 }

@@ -1,14 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--番茄钟数据Activity的布局文件-->
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--番茄钟数据Activity的布局文件-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_grey"
     android:fitsSystemWindows="true"
-    tools:context=".activity.TomatoClockStatisticActivity">
+    tools:context=".activity.TomatoHistoryActivity">
 
     <!-- 标题栏AppBarLayout -->
     <com.google.android.material.appbar.AppBarLayout
@@ -17,7 +15,7 @@
         android:fitsSystemWindows="true">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tomato_clock_statistic_toolbar"
+            android:id="@+id/tomato_history_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
@@ -26,5 +24,11 @@
             app:title="@string/tomato_clock_statistic" />
 
     </com.google.android.material.appbar.AppBarLayout>
+    <!--滚动列表-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tomato_history_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

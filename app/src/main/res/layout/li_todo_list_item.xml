@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--待办条目布局-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,6 +7,8 @@
     android:layout_height="68dp"
     android:orientation="horizontal"
     android:background="@drawable/water_selector">
+    <!--android:background="@drawable/water_selector"-->
+    <!--android:foreground="?android:attr/selectableItemBackground"-->
 
     <!--完成任务复选框-->
     <androidx.appcompat.widget.AppCompatCheckBox
@@ -108,7 +111,9 @@
         android:layout_marginRight="10dp"
         android:layout_gravity="center_vertical"
         style="@style/starCheckboxStyle"
-        android:theme="@style/starCheckboxStyle" />
+        android:theme="@style/starCheckboxStyle"
+        />
         <!--android:buttonTint="@color/blue"-->
+        <!--android:theme="@style/starCheckboxStyle"-->
 
 </LinearLayout>

@@ -27,13 +27,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
 import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
 import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker;
-import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
+import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.fragment.SublimePickerFragment;
 import com.my.smartplanner.util.CalendarUtil;
@@ -94,7 +93,7 @@ public class TodoDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_todo_detail);
 
         //打开数据库
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(TodoDetailActivity.this, "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(TodoDetailActivity.this);
         db = dbHelper.getWritableDatabase();
         //从intent中提取数据
         Intent intent = getIntent();
@@ -498,6 +497,8 @@ public class TodoDetailActivity extends AppCompatActivity {
                 values.put("date", dateString);
                 values.put("alarm", alarmString);
                 db.insert("TodoList", null, values);
+
+                LogUtil.d("old_phone","db update successful");
 
                 intent.putExtra("return_status", RETURN_STATUS_ADD_NEW);//新增
                 setResult(RESULT_OK, intent);

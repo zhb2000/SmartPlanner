@@ -16,10 +16,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
+import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.activity.TodoDetailActivity;
-import com.my.smartplanner.TodoListItem;
+import com.my.smartplanner.item.TodoListItem;
 import com.my.smartplanner.util.CalendarUtil;
 import com.my.smartplanner.util.LogUtil;
 
@@ -87,11 +87,17 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
         if (mContext == null) {
             mContext = parent.getContext();
         }
+
+        //return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.todo_list_item,parent,false));
+
         //打开数据库
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(mContext, "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(mContext);
         db = dbHelper.getWritableDatabase();
+
         //进行视图相关的操作
-        View view = LayoutInflater.from(mContext).inflate(R.layout.todo_list_item, parent, false);
+        LogUtil.d("old_phone","before inflate ok");
+        View view = LayoutInflater.from(mContext).inflate(R.layout.li_todo_list_item, parent, false);
+        LogUtil.d("old_phone","onCreateViewHolder inflate ok");
         final ViewHolder holder = new ViewHolder(view);
         //设置完成复选框的点击事件
         holder.completeCheckBox.setOnClickListener(new View.OnClickListener() {

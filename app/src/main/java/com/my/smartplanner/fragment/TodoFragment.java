@@ -13,7 +13,6 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -21,13 +20,14 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
+import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.MyLayoutAnimationHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.activity.ManageTodoTagsActivity;
 import com.my.smartplanner.adapter.TodoItemAdapter;
-import com.my.smartplanner.TodoListItem;
+import com.my.smartplanner.item.TodoListItem;
 import com.my.smartplanner.util.CalendarUtil;
+import com.my.smartplanner.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -156,7 +156,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mActivity);//对话框
-                dialogBuilder.setView(R.layout.todo_filter_dialog);//设置自定义对话框布局
+                dialogBuilder.setView(R.layout.dialog_todo_filter);//设置自定义对话框布局
                 dialogBuilder.setTitle(mActivity.getString(R.string.filter));//设置对话框标题
 
                 //设置点击确定按钮的事件
@@ -237,6 +237,8 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
                 }
             }
         });
+
+        LogUtil.d("old_phone", "load view in method ok");
     }
 
     /**
@@ -310,7 +312,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
      */
     private void getDataFromDatabase() {
         list.clear();
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(getContext(), "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = createQueryCursor(db);
         if (cursor.moveToFirst()) {
@@ -331,6 +333,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        LogUtil.d("old_phone", "todo list db ok");
     }
 
     /**
@@ -341,7 +344,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         filterList.clear();
         filterList.add(mActivity.getString(R.string.do_not_use_tag_filter));
         //从数据库中读取标签
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(getContext(), "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM TodoTag", null);
         if (cursor.moveToFirst()) {
@@ -361,7 +364,9 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         getDataFromTagDataBase();
         //loadData();
         todoItemAdapter.notifyDataSetChanged();
+        //todoListRecyclerView.getAdapter().notifyDataSetChanged();
         todoListRecyclerView.scheduleLayoutAnimation();
+        //TODO
     }
 
     /**
@@ -371,7 +376,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
      * @param databaseId 条目在数据库中的id
      */
     public void updateChange(int listIndex, int databaseId) {
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(getContext(), "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT id, title, is_complete, is_star, alarm, note, date FROM TodoList WHERE id = ?",
                 new String[]{"" + databaseId});
