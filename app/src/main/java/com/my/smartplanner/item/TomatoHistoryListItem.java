@@ -56,7 +56,7 @@ public class TomatoHistoryListItem {
     /**
      * 列表项中总时长的字符串
      */
-    private String liTimeSum;
+    private String liTimeSumStr;
 
     public TomatoHistoryListItem(String title,
                                  boolean isSuccessful,
@@ -79,7 +79,7 @@ public class TomatoHistoryListItem {
         startTime = CalendarUtil.stringToCalendar(startTimeStr, "yyyy-MM-dd HH:mm:ss");
         endTime = CalendarUtil.stringToCalendar(endTimeStr, "yyyy-MM-dd HH:mm:ss");
         liStartTimeStr = CalendarUtil.calendarToString(startTime, "HH:mm");
-        liTimeSum = String.valueOf(timeSum);
+        liTimeSumStr = String.valueOf(timeSum);
     }
 
     public String getTitle() {
@@ -126,7 +126,7 @@ public class TomatoHistoryListItem {
         return workSum;
     }
 
-    public String getLiTimeSum() {
-        return liTimeSum;
+    public String getLiTimeSumStr() {
+        return liTimeSumStr;
     }
 }

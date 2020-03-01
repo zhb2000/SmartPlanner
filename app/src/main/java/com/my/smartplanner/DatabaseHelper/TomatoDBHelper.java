@@ -1,9 +1,14 @@
 package com.my.smartplanner.DatabaseHelper;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.my.smartplanner.util.CalendarUtil;
+
+import java.util.Calendar;
 
 public class TomatoDBHelper extends SQLiteOpenHelper {
     /**
@@ -50,13 +55,55 @@ public class TomatoDBHelper extends SQLiteOpenHelper {
     private Context mContext;
 
     /**
-     * 创建并获取TomatoDatabaseHelper对象
+     * 获取可写的数据库
      *
      * @param context 传入当前的Context
-     * @return 创建的TomatoDatabaseHelper对象
+     * @return 可写的数据库
      */
-    public static TomatoDBHelper getDBHelper(Context context) {
-        return new TomatoDBHelper(context, DB_NAME, null, LATEST_VERSION);
+    public static SQLiteDatabase getWDB(Context context) {
+        return new TomatoDBHelper(context).getWritableDatabase();
+    }
+
+    /**
+     * 插入一条新记录
+     */
+    public static void insetRecord(
+            Context context,
+            String title,
+            boolean isSuccessful,
+            int timeSum,
+            int workSum,
+            int restSum,
+            int workLen,
+            int restLen,
+            int clockCnt,
+            Calendar startTime,
+            Calendar endTime) {
+        SQLiteDatabase db = getWDB(context);
+        String startTimeStr = CalendarUtil.calendarToString(startTime, "yyyy-MM-dd HH:mm:ss");
+        String endTimeStr = CalendarUtil.calendarToString(endTime, "yyyy-MM-dd HH:mm:ss");
+        ContentValues values = new ContentValues();
+        values.put(TITLE_COL, title);
+        values.put(IS_SUCCESSFUL_COL, isSuccessful ? 1 : 0);
+        values.put(TIME_SUM_COL, timeSum);
+        values.put(WORK_SUM_COL, workSum);
+        values.put(REST_SUM_COL, restSum);
+        values.put(WORK_LEN_COL, workLen);
+        values.put(REST_LEN_COL, restLen);
+        values.put(CLOCK_CNT_COL, clockCnt);
+        values.put(START_TIME_COL, startTimeStr);
+        values.put(END_TIME_COL, endTimeStr);
+        db.insert("TomatoHistory", null, values);
+    }
+
+    /**
+     * 自定义的构造方法
+     *
+     * @param context 传入当前的Context
+     */
+    public TomatoDBHelper(Context context) {
+        super(context, DB_NAME, null, LATEST_VERSION);
+        mContext = context;
     }
 
     /**

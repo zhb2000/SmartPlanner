@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
+import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.item.TodoTagListItem;
 import com.my.smartplanner.adapter.TodoTagItemAdapter;
@@ -52,7 +52,7 @@ public class ManageTodoTagsActivity extends AppCompatActivity {
      * 装填List
      */
     private void fillList() {
-        TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(this);
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(this);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM TodoTag", null);
         if (cursor.moveToFirst()) {

@@ -22,7 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.jaeger.library.StatusBarUtil;
-import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
+import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.fragment.TodoFragment;
 import com.my.smartplanner.adapter.ViewPagerAdapter;
@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(activityReference.get());
+            TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(activityReference.get());
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             db.execSQL("DELETE FROM TodoList");
             return true;
@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(activityReference.get());
+            TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(activityReference.get());
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             for (int i = 1; i <= 50; i++) {
                 db.execSQL("INSERT INTO TodoList (title,is_complete,is_star,alarm,note,date,create_time) " +

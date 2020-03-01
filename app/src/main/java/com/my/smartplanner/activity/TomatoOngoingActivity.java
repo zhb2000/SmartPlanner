@@ -6,12 +6,16 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.my.smartplanner.DatabaseHelper.TomatoDBHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.util.CalendarUtil;
+
+import java.util.Calendar;
 
 import cn.iwgang.countdownview.CountdownView;
 
@@ -57,6 +61,14 @@ public class TomatoOngoingActivity extends AppCompatActivity {
      * 休息总时长（分钟）
      */
     private int restTimeSum;
+    /**
+     * 开始时间
+     */
+    private Calendar startTime;
+    /**
+     * 结束时间
+     */
+    private Calendar endTime;
 
     private static final String WORK_LEN_EXTRA_NAME = "workLen";
     private static final String REST_LEN_EXTRA_NAME = "restLen";
@@ -117,6 +129,7 @@ public class TomatoOngoingActivity extends AppCompatActivity {
      * <p>切换到工作模式，开始工作计时</p>
      */
     private void startTomato() {
+        startTime = Calendar.getInstance();
         workCnt = 0;
         restCnt = 0;
         workTimeSum = 0;
@@ -132,9 +145,9 @@ public class TomatoOngoingActivity extends AppCompatActivity {
         if (isAtWork) {//之前工作，现在切换到休息
             workCnt++;//已完成工作 + 1
             workTimeSum += workLen;//工作时长增加一整段
-            if (workCnt == clockCount) {
+            if (workCnt == clockCount) {//已经成功完成
                 tomatoSuccessful();
-            } else {
+            } else {//尚未完成
                 isAtWork = false;//切换到休息模式
                 //休息计时开始
                 countdownView.start(CalendarUtil.minuteToMillisecond(restLen));
@@ -166,6 +179,8 @@ public class TomatoOngoingActivity extends AppCompatActivity {
      */
     private void tomatoSuccessful() {
         int allTimeSum = workTimeSum + restTimeSum;
+        endTime = Calendar.getInstance();
+        saveData(true);
         super.onBackPressed();
     }
 
@@ -174,6 +189,7 @@ public class TomatoOngoingActivity extends AppCompatActivity {
      * <p>在按下返回键时调用</p>
      */
     private void tomatoFail() {
+        endTime = Calendar.getInstance();
         //修改工作总时长/休息总时长
         if (isAtWork) {
             workTimeSum += hasGoneMinute(countdownView, workLen);
@@ -185,6 +201,7 @@ public class TomatoOngoingActivity extends AppCompatActivity {
         } else {
             int allTimeSum = workTimeSum + restTimeSum;
             Toast.makeText(this, "失败，总时长：" + allTimeSum, Toast.LENGTH_LONG).show();
+            saveData(false);
             super.onBackPressed();
         }
     }
@@ -196,6 +213,24 @@ public class TomatoOngoingActivity extends AppCompatActivity {
     private void tomatoTooShort() {
         Toast.makeText(this, getString(R.string.tomato_too_short_msg), Toast.LENGTH_SHORT).show();
         super.onBackPressed();
+    }
+
+    /**
+     * 保存数据到数据库中
+     *
+     * @param isSuccessful 是否成功
+     */
+    private void saveData(boolean isSuccessful) {
+        TomatoDBHelper.insetRecord(this,
+                title,
+                isSuccessful,
+                workTimeSum + restTimeSum,
+                workTimeSum, restTimeSum,
+                workLen,
+                restLen,
+                clockCount,
+                startTime,
+                endTime);
     }
 
     @Override

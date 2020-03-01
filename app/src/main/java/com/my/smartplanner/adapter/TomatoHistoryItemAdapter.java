@@ -95,7 +95,7 @@ public class TomatoHistoryItemAdapter extends RecyclerView.Adapter<TomatoHistory
         //设置列表项中控件的显示状态
         holder.titleTextView.setText(item.getTitle());
         holder.startTimeTextView.setText(item.getLiStartTimeStr());
-        holder.timeSumTextView.setText(item.getTimeSum());
+        holder.timeSumTextView.setText(item.getLiTimeSumStr());
     }
 
     /**

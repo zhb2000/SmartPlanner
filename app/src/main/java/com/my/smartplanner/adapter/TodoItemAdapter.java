@@ -16,7 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
+import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.activity.TodoDetailActivity;
 import com.my.smartplanner.item.TodoListItem;
@@ -91,12 +91,12 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
         //return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.todo_list_item,parent,false));
 
         //打开数据库
-        TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(mContext);
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(mContext);
         db = dbHelper.getWritableDatabase();
 
         //进行视图相关的操作
         LogUtil.d("old_phone","before inflate ok");
-        View view = LayoutInflater.from(mContext).inflate(R.layout.li_todo_list_item, parent, false);//TODO old phone BUG
+        View view = LayoutInflater.from(mContext).inflate(R.layout.li_todo_list_item, parent, false);
         LogUtil.d("old_phone","onCreateViewHolder inflate ok");
         final ViewHolder holder = new ViewHolder(view);
         //设置完成复选框的点击事件

@@ -51,8 +51,7 @@ public class TomatoHistoryActivity extends AppCompatActivity {
      * 装填List
      */
     private void fillList() {
-        SQLiteDatabase db = TomatoDBHelper.getDBHelper(this)
-                .getWritableDatabase();
+        SQLiteDatabase db = TomatoDBHelper.getWDB(this);
         Cursor cursor = db.rawQuery("SELECT * FROM TomatoHistory", null);
         if (cursor.moveToFirst()) {
             do {

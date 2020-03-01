@@ -20,7 +20,7 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
+import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.MyLayoutAnimationHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.activity.ManageTodoTagsActivity;
@@ -312,7 +312,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
      */
     private void getDataFromDatabase() {
         list.clear();
-        TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(getContext());
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = createQueryCursor(db);
         if (cursor.moveToFirst()) {
@@ -344,7 +344,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
         filterList.clear();
         filterList.add(mActivity.getString(R.string.do_not_use_tag_filter));
         //从数据库中读取标签
-        TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(getContext());
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM TodoTag", null);
         if (cursor.moveToFirst()) {
@@ -376,7 +376,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
      * @param databaseId 条目在数据库中的id
      */
     public void updateChange(int listIndex, int databaseId) {
-        TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(getContext());
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT id, title, is_complete, is_star, alarm, note, date FROM TodoList WHERE id = ?",
                 new String[]{"" + databaseId});

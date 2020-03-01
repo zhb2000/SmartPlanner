@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.my.smartplanner.DatabaseHelper.TodoDatabaseHelper;
+import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.item.TodoTagListItem;
 
@@ -89,7 +89,7 @@ public class TodoTagItemAdapter extends RecyclerView.Adapter<TodoTagItemAdapter.
         }
 
         //打开数据库
-        TodoDatabaseHelper dbHelper = TodoDatabaseHelper.getDBHelper(mContext);
+        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(mContext);
         db = dbHelper.getWritableDatabase();
 
         //进行视图相关的操作

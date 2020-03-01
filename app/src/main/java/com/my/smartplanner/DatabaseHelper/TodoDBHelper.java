@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * 用于操作 TodoDatabase.db 数据库的 helper
  */
-public class TodoDatabaseHelper extends SQLiteOpenHelper {
+public class TodoDBHelper extends SQLiteOpenHelper {
 
     /**
      * TodoList表建表语句
@@ -47,8 +47,8 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper {
      * @param context 传入当前的Context
      * @return 创建的TodoDatabaseHelper对象
      */
-    public static TodoDatabaseHelper getDBHelper(Context context) {
-        return new TodoDatabaseHelper(context, DB_NAME, null, LATEST_VERSION);
+    public static TodoDBHelper getDBHelper(Context context) {
+        return new TodoDBHelper(context, DB_NAME, null, LATEST_VERSION);
     }
 
     /**
@@ -59,8 +59,8 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper {
      * @param factory to use for creating cursor objects, or null for the default
      * @param version number of the database (starting at 1)
      */
-    public TodoDatabaseHelper(Context context, String name,
-                              SQLiteDatabase.CursorFactory factory, int version) {
+    public TodoDBHelper(Context context, String name,
+                        SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         mContext = context;
     }
