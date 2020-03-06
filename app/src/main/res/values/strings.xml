@@ -60,4 +60,7 @@
     <string name="minute">分钟</string>
     <string name="start">开始</string>
     <string name="default_word">默认</string>
+    <string name="total_time_li">总时长:</string>
+    <string name="tomato_date_li">日期:</string>
+
 </resources>
