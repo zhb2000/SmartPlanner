@@ -1,5 +1,7 @@
 package com.my.smartplanner.item;
 
+import android.content.Context;
+
 import com.my.smartplanner.util.CalendarUtil;
 
 import java.util.Calendar;
@@ -8,6 +10,10 @@ import java.util.Calendar;
  * 番茄钟历史列表项实体类
  */
 public class TomatoHistoryListItem {
+
+    public static final int COLOR_MORNING = 0, COLOR_AFTERNOON = 1,
+            COLOR_NIGHT = 3, COLOR_UNSUCCESSFUL = -1;
+
     /**
      * 标题
      */
@@ -57,6 +63,18 @@ public class TomatoHistoryListItem {
      * 列表项中总时长的字符串
      */
     private String liTimeSumStr;
+    /**
+     * 列表项中已完成/未完成的字符串
+     */
+    private String liSuccessStr;
+    /**
+     * 列表项中日期的字符串
+     */
+    private String liDateStr;
+    /**
+     * 列表项的颜色
+     */
+    private int liColor;
 
     public TomatoHistoryListItem(String title,
                                  boolean isSuccessful,
@@ -76,10 +94,24 @@ public class TomatoHistoryListItem {
         this.workLen = workLen;
         this.restLen = restLen;
         this.clockCnt = clockCnt;
+
         startTime = CalendarUtil.stringToCalendar(startTimeStr, "yyyy-MM-dd HH:mm:ss");
         endTime = CalendarUtil.stringToCalendar(endTimeStr, "yyyy-MM-dd HH:mm:ss");
+
         liStartTimeStr = CalendarUtil.calendarToString(startTime, "HH:mm");
         liTimeSumStr = String.valueOf(timeSum);
+        liSuccessStr = isSuccessful ? "已完成" : "未完成";
+        liDateStr = startTime.get(Calendar.MONTH) + "月" + startTime.get(Calendar.DATE) + "日";
+
+        if (!isSuccessful) {
+            liColor = COLOR_UNSUCCESSFUL;
+        } else if (CalendarUtil.isTomatoMorning(startTime)) {
+            liColor = COLOR_MORNING;
+        } else if (CalendarUtil.isTomatoAfternoon(startTime)) {
+            liColor = COLOR_AFTERNOON;
+        } else {
+            liColor = COLOR_NIGHT;
+        }
     }
 
     public String getTitle() {
@@ -90,7 +122,7 @@ public class TomatoHistoryListItem {
         return liStartTimeStr;
     }
 
-    public boolean getIsSuccessful(){
+    public boolean getIsSuccessful() {
         return isSuccessful;
     }
 
@@ -128,5 +160,17 @@ public class TomatoHistoryListItem {
 
     public String getLiTimeSumStr() {
         return liTimeSumStr;
+    }
+
+    public String getLiSuccessStr() {
+        return liSuccessStr;
+    }
+
+    public String getLiDateStr() {
+        return liDateStr;
+    }
+
+    public int getLiColor() {
+        return liColor;
     }
 }

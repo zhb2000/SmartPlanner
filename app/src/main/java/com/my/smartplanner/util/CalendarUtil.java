@@ -158,4 +158,19 @@ public class CalendarUtil {
     public static long minuteToMillisecond(int minute) {
         return minute * 60 * 1000;
     }
+
+    public static boolean isTomatoMorning(Calendar calendar) {
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        return hourOfDay >= 6 && hourOfDay < 13;
+    }
+
+    public static boolean isTomatoAfternoon(Calendar calendar) {
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        return hourOfDay >= 13 && hourOfDay < 18;
+    }
+
+    public static boolean isTomatoNight(Calendar calendar) {
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        return hourOfDay >= 18 || hourOfDay < 6;
+    }
 }

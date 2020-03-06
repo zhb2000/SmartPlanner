@@ -62,5 +62,7 @@
     <string name="default_word">默认</string>
     <string name="total_time_li">总时长:</string>
     <string name="tomato_date_li">日期:</string>
+    <string name="tomato_li_success">已完成</string>
+    <string name="tomato_li_not_success">未完成</string>
 
 </resources>

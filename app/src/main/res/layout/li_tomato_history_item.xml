@@ -20,13 +20,14 @@
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/li_tomato_history_card"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="5dp"
         android:layout_weight="1"
-        android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/tomato_history_afternoon"
         app:cardCornerRadius="5dp"
         app:contentPaddingBottom="10dp"
         app:contentPaddingLeft="20dp"
@@ -43,35 +44,52 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="title of tomato"
+                android:textColor="@color/white"
                 android:textSize="20sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
                     android:layout_marginEnd="5dp"
-                    android:text="@string/total_time_li"/>
+                    android:layout_marginRight="5dp"
+                    android:text="@string/total_time_li"
+                    android:textColor="@color/tomato_history_text_trans" />
+
                 <TextView
                     android:id="@+id/li_tomato_history_time_sum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="15"
+                    android:textColor="@color/tomato_history_text_trans" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
-                    android:text="15 min" />
+                    android:text="@string/minute"
+                    android:textColor="@color/tomato_history_text_trans" />
+
                 <TextView
+                    android:id="@+id/li_tomato_history_success"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:text="@string/tomato_date_li"/>
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="@string/tomato_li_success"
+                    android:textColor="@color/tomato_history_text_trans" />
+
                 <TextView
+                    android:id="@+id/li_tomato_history_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2月1日" />
+                    android:text="2月1日"
+                    android:textColor="@color/tomato_history_text_trans" />
             </LinearLayout>
 
         </LinearLayout>

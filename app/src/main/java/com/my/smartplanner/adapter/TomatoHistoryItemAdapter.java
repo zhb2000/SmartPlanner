@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.my.smartplanner.R;
@@ -34,8 +35,9 @@ public class TomatoHistoryItemAdapter extends RecyclerView.Adapter<TomatoHistory
      * static内部类ViewHolder
      */
     static class ViewHolder extends RecyclerView.ViewHolder {
-        View itemView;
-        TextView titleTextView, startTimeTextView, timeSumTextView;
+        CardView cardView;
+        TextView titleTextView, startTimeTextView,
+                timeSumTextView, dateTextView, successTextView;
 
         /**
          * ViewHolder的构造方法
@@ -43,10 +45,12 @@ public class TomatoHistoryItemAdapter extends RecyclerView.Adapter<TomatoHistory
         ViewHolder(View view) {
             super((view));
             //获取控件的引用
-            itemView = view;
+            cardView = view.findViewById(R.id.li_tomato_history_card);
             titleTextView = view.findViewById(R.id.li_tomato_history_title);
             startTimeTextView = view.findViewById(R.id.li_tomato_history_start_time);
             timeSumTextView = view.findViewById(R.id.li_tomato_history_time_sum);
+            dateTextView = view.findViewById(R.id.li_tomato_history_date);
+            successTextView = view.findViewById(R.id.li_tomato_history_success);
         }
     }
 
@@ -75,11 +79,11 @@ public class TomatoHistoryItemAdapter extends RecyclerView.Adapter<TomatoHistory
                 parent, false);//为该列表项加载布局
         final ViewHolder holder = new ViewHolder(view);//创建ViewHolder
         //设置点击事件
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO click outer option
-                Toast.makeText(mContext, "click outer!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "click card!", Toast.LENGTH_SHORT).show();
             }
         });
         return holder;
@@ -91,11 +95,35 @@ public class TomatoHistoryItemAdapter extends RecyclerView.Adapter<TomatoHistory
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //获取对应的实体类
-        TomatoHistoryListItem item=tomatoHistories.get(position);
+        TomatoHistoryListItem item = tomatoHistories.get(position);
         //设置列表项中控件的显示状态
         holder.titleTextView.setText(item.getTitle());
         holder.startTimeTextView.setText(item.getLiStartTimeStr());
         holder.timeSumTextView.setText(item.getLiTimeSumStr());
+        holder.dateTextView.setText(item.getLiDateStr());
+        holder.successTextView.setText(item.getLiSuccessStr());
+        switch (item.getLiColor()) {
+            case TomatoHistoryListItem.COLOR_MORNING:
+                holder.cardView.setCardBackgroundColor(
+                        mContext.getResources()
+                                .getColor(R.color.tomato_history_morning));
+                break;
+            case TomatoHistoryListItem.COLOR_AFTERNOON:
+                holder.cardView.setCardBackgroundColor(
+                        mContext.getResources()
+                                .getColor(R.color.tomato_history_afternoon));
+                break;
+            case TomatoHistoryListItem.COLOR_NIGHT:
+                holder.cardView.setCardBackgroundColor(
+                        mContext.getResources()
+                                .getColor(R.color.tomato_history_night));
+                break;
+            case TomatoHistoryListItem.COLOR_UNSUCCESSFUL:
+                holder.cardView.setCardBackgroundColor(
+                        mContext.getResources()
+                                .getColor(R.color.tomato_history_unsuccessful));
+                break;
+        }
     }
 
     /**
