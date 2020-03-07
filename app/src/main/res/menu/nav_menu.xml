@@ -1,33 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--侧边栏菜单-->
+<?xml version="1.0" encoding="utf-8"?><!--侧边栏菜单-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:id="@+id/nav_group1"
+    <group
+        android:id="@+id/nav_group1"
         android:checkableBehavior="single">
-        <item android:id="@+id/nav_main_page"
-            android:title="@string/home_page"
-            android:icon="@mipmap/ic_home_black"/>
+        <item
+            android:id="@+id/nav_main_page"
+            android:icon="@mipmap/ic_home_black"
+            android:title="@string/home_page" />
 
-        <item android:id="@+id/nav_tomato"
-            android:title="@string/tomato_clock"
-            android:icon="@mipmap/ic_alarm_on_black"/>
+        <item
+            android:id="@+id/nav_tomato"
+            android:icon="@mipmap/ic_alarm_on_black"
+            android:title="@string/tomato_clock" />
 
-        <item android:id="@+id/nav_statistic"
-            android:title="@string/statistic"
-            android:icon="@mipmap/ic_chart_black"/>
+        <item
+            android:id="@+id/nav_statistic"
+            android:icon="@mipmap/ic_chart_black"
+            android:title="@string/statistic" />
 
-        <item android:id="@+id/nav_calendar"
-            android:title="@string/calendar"
-            android:icon="@mipmap/ic_calendar_black"/>
+        <item
+            android:id="@+id/nav_calendar"
+            android:icon="@mipmap/ic_calendar_black"
+            android:title="@string/calendar" />
     </group>
 
-    <group android:id="@+id/nav_group2"
+    <group
+        android:id="@+id/nav_group2"
         android:checkableBehavior="single">
-        <item android:id="@+id/nav_setting"
-            android:title="@string/setting"
-            android:icon="@mipmap/ic_settings_applications_outline_black"/>
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@mipmap/ic_settings_applications_outline_black"
+            android:title="@string/setting" />
 
-        <item android:id="@+id/nav_about"
-            android:title="@string/about"
-            android:icon="@mipmap/ic_info_black"/>
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@mipmap/ic_info_black"
+            android:title="@string/about" />
     </group>
 </menu>

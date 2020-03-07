@@ -1,7 +1,5 @@
 package com.my.smartplanner.item;
 
-import android.content.Context;
-
 import com.my.smartplanner.util.CalendarUtil;
 
 import java.util.Calendar;
@@ -54,6 +52,7 @@ public class TomatoHistoryListItem {
      * 结束时间
      */
     private Calendar endTime;
+    private String startTimeStr, endTimeStr;
 
     /**
      * 列表项中开始时间的字符串
@@ -94,6 +93,8 @@ public class TomatoHistoryListItem {
         this.workLen = workLen;
         this.restLen = restLen;
         this.clockCnt = clockCnt;
+        this.startTimeStr = startTimeStr;
+        this.endTimeStr = endTimeStr;
 
         startTime = CalendarUtil.stringToCalendar(startTimeStr, "yyyy-MM-dd HH:mm:ss");
         endTime = CalendarUtil.stringToCalendar(endTimeStr, "yyyy-MM-dd HH:mm:ss");
@@ -101,7 +102,7 @@ public class TomatoHistoryListItem {
         liStartTimeStr = CalendarUtil.calendarToString(startTime, "HH:mm");
         liTimeSumStr = String.valueOf(timeSum);
         liSuccessStr = isSuccessful ? "已完成" : "未完成";
-        liDateStr = startTime.get(Calendar.MONTH) + "月" + startTime.get(Calendar.DATE) + "日";
+        liDateStr = (startTime.get(Calendar.MONTH) + 1) + "月" + startTime.get(Calendar.DATE) + "日";
 
         if (!isSuccessful) {
             liColor = COLOR_UNSUCCESSFUL;
@@ -172,5 +173,13 @@ public class TomatoHistoryListItem {
 
     public int getLiColor() {
         return liColor;
+    }
+
+    public String getStartTimeStr() {
+        return startTimeStr;
+    }
+
+    public String getEndTimeStr() {
+        return endTimeStr;
     }
 }

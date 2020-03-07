@@ -55,7 +55,7 @@ public class TomatoHistoryActivity extends AppCompatActivity {
      */
     private void fillList() {
         SQLiteDatabase db = TomatoDBHelper.getWDB(this);
-        Cursor cursor = db.rawQuery("SELECT * FROM TomatoHistory", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM TomatoHistory ORDER BY start_time DESC", null);
         if (cursor.moveToFirst()) {
             do {
                 String title = DBUtil.getStringByName(cursor, TomatoDBHelper.TITLE_COL);

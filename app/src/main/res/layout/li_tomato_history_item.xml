@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:layout_marginRight="5dp"
-                    android:text="@string/total_time_li"
+                    android:text="@string/total_time_colon"
                     android:textColor="@color/tomato_history_text_trans" />
 
                 <TextView

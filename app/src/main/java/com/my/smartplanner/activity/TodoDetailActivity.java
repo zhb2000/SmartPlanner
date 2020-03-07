@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -391,13 +392,28 @@ public class TodoDetailActivity extends AppCompatActivity {
             //菜单-删除
             case R.id.todo_detail_menu_delete:
                 if (mode == EDIT_MODE) {
-                    db.execSQL("DELETE FROM TodoList WHERE id = ?", new String[]{"" + id});
-                    Intent intent = new Intent();
-                    intent.putExtra("return_status", RETURN_STATUS_REMOVE_ITEM);//删除
-                    intent.putExtra("list_index", listIndex);
-                    setResult(RESULT_OK, intent);
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                    dialog.setTitle(getString(R.string.confirm_to_delete));
+                    dialog.setMessage(R.string.confirm_to_delete_todo);
+                    dialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            db.execSQL("DELETE FROM TodoList WHERE id = ?", new String[]{"" + id});
+                            Intent intent = new Intent();
+                            intent.putExtra("return_status", RETURN_STATUS_REMOVE_ITEM);//删除
+                            intent.putExtra("list_index", listIndex);
+                            setResult(RESULT_OK, intent);
+                            TodoDetailActivity.super.onBackPressed();
+                        }
+                    });
+                    dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dialog.show();
                 }
-                finish();
                 break;
             //菜单-详情
             case R.id.todo_detail_menu_view_detail:

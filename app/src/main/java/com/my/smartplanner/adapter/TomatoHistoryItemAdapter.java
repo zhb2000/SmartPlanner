@@ -1,14 +1,13 @@
 package com.my.smartplanner.adapter;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,10 +25,6 @@ public class TomatoHistoryItemAdapter extends RecyclerView.Adapter<TomatoHistory
      * 历史记录
      */
     private List<TomatoHistoryListItem> tomatoHistories;
-    /**
-     * TomatoDatabase.db数据库，里面有TomatoHistory表
-     */
-    private SQLiteDatabase db;
 
     /**
      * static内部类ViewHolder
@@ -83,7 +78,13 @@ public class TomatoHistoryItemAdapter extends RecyclerView.Adapter<TomatoHistory
             @Override
             public void onClick(View v) {
                 //TODO click outer option
-                Toast.makeText(mContext, "click card!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, "click card!", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+                dialog.setTitle(R.string.view_detail);
+                int position = holder.getAdapterPosition();
+                TomatoHistoryListItem item = tomatoHistories.get(position);
+                dialog.setMessage(createDialogMsg(item, mContext));
+                dialog.show();
             }
         });
         return holder;
@@ -134,5 +135,37 @@ public class TomatoHistoryItemAdapter extends RecyclerView.Adapter<TomatoHistory
     @Override
     public int getItemCount() {
         return tomatoHistories.size();
+    }
+
+    /**
+     * 生成对话框里的字符串
+     *
+     * @param item    实体对象
+     * @param context Context环境
+     * @return 对话框里的字符串
+     */
+    private static String createDialogMsg(TomatoHistoryListItem item, Context context) {
+        String msg = context.getString(R.string.total_time_colon) + " "
+                + item.getTimeSum() + context.getString(R.string.minute) + "\n";
+        msg += context.getString(R.string.work_time_sum_colon) + " "
+                + item.getWorkSum() + context.getString(R.string.minute) + "\n";
+        msg += context.getString(R.string.rest_time_sum_colon) + " "
+                + item.getRestSum() + context.getString(R.string.minute) + "\n";
+        msg += context.getString(R.string.tomato_status_colon) + " "
+                + item.getLiSuccessStr() + "\n";
+        msg += context.getString(R.string.work_time_len_colon) + " "
+                + item.getWorkLen() + context.getString(R.string.minute) + "\n";
+        msg += context.getString(R.string.rest_time_len_colon) + " "
+                + item.getRestLen() + context.getString(R.string.minute) + "\n";
+        msg += context.getString(R.string.clock_cnt_colon) + " "
+                + item.getClockCnt() + "\n";
+        msg += context.getString(R.string.date_colon) + " "
+                + item.getLiDateStr() + "\n";
+        msg += context.getString(R.string.start_time_colon) + " "
+                + item.getStartTimeStr() + "\n";
+        msg += context.getString(R.string.end_time_colon) + " "
+                + item.getEndTimeStr() + "\n";
+
+        return msg;
     }
 }

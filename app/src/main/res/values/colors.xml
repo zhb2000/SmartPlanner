@@ -22,4 +22,7 @@
     <color name="tomato_history_night">#223a68</color>
     <color name="tomato_history_unsuccessful">#D81B60</color>
     <color name="tomato_history_text_trans">#B3FFFFFF</color>
+    <color name="tomato_ongoing_dark_bg">#202125</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="hint_text_trans_dark">#B3FFFFFF</color>
 </resources>

@@ -115,19 +115,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 1);
             }
         });
-        /*addFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "pop up", Snackbar.LENGTH_SHORT)
-                        .setAction(R.string.undo, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(MainActivity.this, "click undo", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .show();
-            }
-        });*/
 
         //tab栏相关操作
         List<Fragment> fragments = new ArrayList<>();
