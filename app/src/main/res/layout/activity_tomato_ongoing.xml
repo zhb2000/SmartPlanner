@@ -1,40 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?><!--番茄钟计时页面布局-->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".activity.TomatoOngoingActivity">
 
-    <LinearLayout
+    <!-- 标题栏AppBarLayout -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="false"
+        app:elevation="0dp">
 
-        <TextView
-            android:id="@+id/tomato_clock_ongoing_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tomato_ongoing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/tomato_ongoing_dark_bg"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:title="111" />
 
-        <cn.iwgang.countdownview.CountdownView
-            android:id="@+id/tomato_clock_ongoing_countdown"
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/tomato_ongoing_dark_bg"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:isHideTimeBackground="true"
-            app:isShowDay="true"
-            app:isShowHour="true"
-            app:isShowMillisecond="true"
-            app:isShowMinute="true"
-            app:isShowSecond="true"
-            app:isTimeTextBold="true"
-            app:suffixGravity="bottom"
-            app:suffixHour="时"
-            app:suffixMillisecond="毫秒"
-            app:suffixMinute="分"
-            app:suffixSecond="秒"
-            app:suffixTextColor="#000000"
-            app:suffixTextSize="12sp"
-            app:timeTextColor="#000000"
-            app:timeTextSize="22sp" />
-    </LinearLayout>
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="50dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <cn.iwgang.countdownview.CountdownView
+                android:layout_marginVertical="10dp"
+                android:id="@+id/tomato_clock_ongoing_countdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:isHideTimeBackground="true"
+                app:isShowHour="true"
+                app:isShowMinute="true"
+                app:isShowSecond="true"
+                app:isSuffixTextBold="true"
+                app:isTimeTextBold="true"
+                app:suffixTextColor="@color/white"
+                app:suffixTextSize="50sp"
+                app:timeTextColor="@color/white"
+                app:timeTextSize="60sp" />
+
+            <TextView
+                android:id="@+id/tomato_clock_ongoing_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginVertical="10dp"
+                android:text="title"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tomato_ongoing_skip_rest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/skip_rest"
+                android:theme="@style/Theme.MaterialComponents.Light"/>
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

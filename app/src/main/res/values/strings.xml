@@ -37,6 +37,8 @@
     <string name="not_created_yet">尚未创建</string>
     <string name="not_completed_yet">尚未完成</string>
     <string name="do_not_use_tag_filter">不筛选标签</string>
+    <string name="confirm_to_delete">确定删除</string>
+    <string name="confirm_to_delete_todo">确定要删除这条待办吗</string>
     <string name="step_statistic">步数统计</string>
     <string name="app_using_statistic">App使用统计</string>
     <string name="show_has_completed_todo">显示已完成</string>
@@ -48,6 +50,7 @@
     <string name="input_new_todo_tag_name">输入标签的新名字</string>
     <string name="todo_tag_already_exist">该标签已经存在</string>
     <string name="tomato_clock_statistic">番茄钟数据</string>
+    <string name="history">历史记录</string>
     <string name="confirm_to_give_up">确定要放弃吗</string>
     <string name="give_up">放弃</string>
     <string name="give_up_tomato_msg">您确定要放弃吗？</string>
@@ -60,4 +63,20 @@
     <string name="minute">分钟</string>
     <string name="start">开始</string>
     <string name="default_word">默认</string>
+    <string name="total_time_colon">总时长:</string>
+    <string name="date_colon">日期:</string>
+    <string name="tomato_li_success">已完成</string>
+    <string name="tomato_li_not_success">未完成</string>
+    <string name="start_time_colon">开始时间:</string>
+    <string name="end_time_colon">结束时间:</string>
+    <string name="tomato_status_colon">状态:</string>
+    <string name="work_time_sum_colon">工作总时长:</string>
+    <string name="rest_time_sum_colon">休息总时长:</string>
+    <string name="work_time_len_colon">单次工作时长:</string>
+    <string name="rest_time_len_colon">单次休息时长:</string>
+    <string name="clock_cnt_colon">设定的重复次数:</string>
+    <string name="tomato_working">工作中</string>
+    <string name="tomato_resting">休息中</string>
+    <string name="skip_rest">跳过休息</string>
+
 </resources>

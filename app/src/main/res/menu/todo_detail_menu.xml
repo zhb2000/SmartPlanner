@@ -1,8 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--待办详情菜单-->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/todo_detail_menu_delete"
-        android:title="@string/delete"/>
-    <item android:id="@+id/todo_detail_menu_view_detail"
-        android:title="@string/view_detail"/>
+<?xml version="1.0" encoding="utf-8"?><!--待办详情菜单-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/todo_detail_menu_delete"
+        android:icon="@drawable/ic_delete_grey_24dp"
+        android:title="@string/delete"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/todo_detail_menu_view_detail"
+        android:icon="@drawable/ic_info_outline_grey_24dp"
+        android:title="@string/view_detail"
+        app:showAsAction="ifRoom" />
 </menu>
