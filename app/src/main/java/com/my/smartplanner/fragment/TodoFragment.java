@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +14,9 @@ import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -47,6 +51,8 @@ public class TodoFragment extends LazyLoadFragment {
 
     private AppCompatSpinner typeSpinner;
     private LinearLayout filterArea;
+    private TextView filterText;
+    private ImageView filterIcon;
 
     private static final int QUERY_TODAY = 0;//今天
     private static final int QUERY_IMPORTANT = 1;//重要
@@ -93,6 +99,7 @@ public class TodoFragment extends LazyLoadFragment {
         recyclerViewSetting();
         spinnerSetting();
         filterSetting();
+        setFilterUI(null);
     }
 
 
@@ -310,6 +317,8 @@ public class TodoFragment extends LazyLoadFragment {
         todoListRecyclerView = mRootView.findViewById(R.id.todo_list_recycler_view);
         typeSpinner = mRootView.findViewById(R.id.todo_page_type_spinner);
         filterArea = mRootView.findViewById(R.id.todo_page_filter_area);
+        filterText = mRootView.findViewById(R.id.todo_page_filter_text);
+        filterIcon = mRootView.findViewById(R.id.todo_page_filter_icon);
     }
 
     /**
@@ -378,6 +387,7 @@ public class TodoFragment extends LazyLoadFragment {
                         //修改成员变量
                         filterTag = tempFilterTag;
                         showCompleted = tempShowCompleted;
+                        setFilterUI(filterTag);
                         todoItemAdapter.setShowCompleted(showCompleted);//给adapter传递消息
                         SharedPreferences.Editor editor = mActivity.getSharedPreferences(
                                 "todo_preference", Context.MODE_PRIVATE).edit();
@@ -391,7 +401,6 @@ public class TodoFragment extends LazyLoadFragment {
                 dialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                     }
                 });
 
@@ -462,6 +471,24 @@ public class TodoFragment extends LazyLoadFragment {
                 tempShowCompleted = !tempShowCompleted;
             }
         });
+    }
+
+    /**
+     * 设置筛选器的UI
+     */
+    private void setFilterUI(String currentTag) {
+        if (currentTag != null) {
+            filterText.setTypeface(Typeface.DEFAULT_BOLD);
+            filterText.setTextColor(getResources().getColor(R.color.blue));
+            String str = getString(R.string.tag_colon) + currentTag;
+            filterText.setText(str);
+            filterIcon.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.SRC_IN);
+        } else {
+            filterText.setTypeface(Typeface.DEFAULT);
+            filterText.setTextColor(getResources().getColor(R.color.grey));
+            filterText.setText(getString(R.string.filter));
+            filterIcon.setColorFilter(getResources().getColor(R.color.grey), PorterDuff.Mode.SRC_IN);
+        }
     }
 
 
