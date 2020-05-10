@@ -2,10 +2,10 @@ package com.my.smartplanner.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationSet;
@@ -23,15 +23,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.MyLayoutAnimationHelper;
 import com.my.smartplanner.R;
+import com.my.smartplanner.activity.MainActivity;
 import com.my.smartplanner.activity.ManageTodoTagsActivity;
 import com.my.smartplanner.adapter.TodoItemAdapter;
 import com.my.smartplanner.item.TodoListItem;
 import com.my.smartplanner.util.CalendarUtil;
 import com.my.smartplanner.util.LogUtil;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,10 +40,13 @@ import java.util.List;
 /**
  * 待办事项页面的Fragment
  */
-public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
+public class TodoFragment extends LazyLoadFragment {
     private TodoItemAdapter todoItemAdapter;
     private RecyclerView todoListRecyclerView;
     private List<TodoListItem> list = new LinkedList<>();
+
+    private AppCompatSpinner typeSpinner;
+    private LinearLayout filterArea;
 
     private static final int QUERY_TODAY = 0;//今天
     private static final int QUERY_IMPORTANT = 1;//重要
@@ -59,74 +63,280 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
     private String tempFilterTag;
     private boolean tempShowCompleted;
 
-    /*public static final String ARGS_PAGE = "args_page";
-    private int mPage;*/
 
-    public static TodoFragment newInstance(/*int page*/) {
+    public static TodoFragment newInstance() {
         Bundle args = new Bundle();
-        //args.putInt(ARGS_PAGE, page);
         TodoFragment fragment = new TodoFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
+    /**
+     * @return 返回该Fragment的layout id
+     */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //mPage = getArguments().getInt(ARGS_PAGE);
+    protected int getLayoutId() {
+        return R.layout.fragment_todo;
     }
 
     @Override
     public void loadData() {
-        //获取偏好的待办类型
-        SharedPreferences sharedPreferences = mActivity.getSharedPreferences(
-                "todo_preference", Context.MODE_PRIVATE);
-        queryType = sharedPreferences.getInt("select_todo_type", QUERY_ALL);
-
-        //获取是否显示已完成待办的偏好
-        showCompleted = sharedPreferences.getBoolean("show_completed", true);
-
-        //从数据库中加载数据
-        getDataFromDatabase();
-        todoItemAdapter = new TodoItemAdapter(list);
-        todoItemAdapter.setShowCompleted(showCompleted);//对adapter进行设置是否显示已完成
-
-        getDataFromTagDataBase();
-
-        /*//给筛选列表项装填数据
-        filterList.clear();
-        filterList.add(mActivity.getString(R.string.do_not_use_tag_filter));
-        //从数据库中读取标签
-        TodoDatabaseHelper dbHelper = new TodoDatabaseHelper(getContext(), "TodoDatabase.db", null, TodoDatabaseHelper.NOW_VERSION);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM TodoTag", null);
-        if (cursor.moveToFirst()) {
-            do {
-                filterList.add(cursor.getString(cursor.getColumnIndex("tag_name")));
-            } while (cursor.moveToNext());
-        }
-        cursor.close();*/
+        loadPreferences();
+        fillItemsWithoutTag();
+        fillItemsTags();
+        fillTags();
     }
 
     @Override
     public void loadView() {
-        todoListRecyclerView = mRootView.findViewById(R.id.todo_list_recycler_view);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        findViews();
+        recyclerViewSetting();
+        spinnerSetting();
+        filterSetting();
+    }
 
+
+    /**
+     * （从详情返回）新增或点击刷新
+     */
+    public void addNewItemOrRefresh() {
+        new AddNewItemOrRefreshTask(this).execute();
+        LogUtil.d("data", "add new or refresh");
+    }
+
+    /**
+     * 从详情返回，修改
+     */
+    public void updateItem(int listIndex, TodoListItem item) {
+        list.set(listIndex, item);
+        todoItemAdapter.notifyItemChanged(listIndex);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                fillTags();
+            }
+        }).start();
+    }
+
+    /**
+     * 从详情返回，删除
+     *
+     * @param listIndex 被移除的条目在List中的位置
+     */
+    public void removeItem(int listIndex) {
+        list.remove(listIndex);
+        todoItemAdapter.notifyItemRemoved(listIndex);
+    }
+
+    /**
+     * 从标签管理返回，修改
+     */
+    public void modifyTag() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                fillTags();
+                fillItemsTags();
+            }
+        }).start();
+    }
+
+    /**
+     * 更改查询待办类型或更改筛选标签
+     */
+    private void changeQueryTypeOrFilterTag() {
+        new ChangeQueryTypeOrFilterTagTask(this).execute();
+    }
+
+
+    /**
+     * 加载首选项，设置queryType和showCompleted
+     */
+    private void loadPreferences() {
+        SharedPreferences sharedPreferences = mActivity.getSharedPreferences(
+                "todo_preference", Context.MODE_PRIVATE);
+        queryType = sharedPreferences.getInt("select_todo_type", QUERY_ALL);
+        showCompleted = sharedPreferences.getBoolean("show_completed", true);
+    }
+
+    /**
+     * 装填items数组（暂不装填对象的tags）
+     */
+    private void fillItemsWithoutTag() {
+        SQLiteDatabase db = TodoDBHelper.getWDB(getContext());
+        Cursor cursor = createQueryCursor(db);
+        list.clear();
+        list.addAll(getTodoItemsFromCursor(cursor));
+        cursor.close();
+        db.close();
+    }
+
+    /**
+     * 装填items中对象的tags
+     */
+    private void fillItemsTags() {
+        SQLiteDatabase db = TodoDBHelper.getWDB(getContext());
+        for (TodoListItem item : list) {
+            item.clearTags();
+            Cursor cursor1 = db.rawQuery("SELECT DISTINCT tag FROM TodoTag WHERE id = ?",
+                    new String[]{String.valueOf(item.getId())});
+            if (cursor1.moveToFirst()) {
+                do {
+                    item.addTag(cursor1.getString(cursor1.getColumnIndex("tag")));
+                } while (cursor1.moveToNext());
+            }
+            cursor1.close();
+        }
+        db.close();
+    }
+
+    /**
+     * 装填tags数组
+     */
+    private void fillTags() {
+        SQLiteDatabase db = TodoDBHelper.getWDB(getContext());
+        filterList.clear();
+        filterList.add(mActivity.getString(R.string.do_not_use_tag_filter));
+        Cursor cursor = db.rawQuery("SELECT DISTINCT tag FROM TodoTag", null);
+        if (cursor.moveToFirst()) {
+            do {
+                filterList.add(cursor.getString(cursor.getColumnIndex("tag")));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+    }
+
+
+    /**
+     * 按相应要求进行SQL查询并返回Cursor对象
+     *
+     * @param db 数据库对象
+     * @return 查询结果的Cursor对象
+     */
+    private Cursor createQueryCursor(SQLiteDatabase db) {
+        final String QUERY_TODAY_WHERE = "(end_date = ?)";//条件：今天
+        final String QUERY_IMPORTANT_WHERE = "(is_star = 1)";//条件：加星
+        final String QUERY_HAS_PLANNED_WHERE = "(NOT end_date IS NULL)";//条件：已计划
+        final String QUERY_HAS_NOT_PLANNED_WHERE = "(end_date IS NULL)";//条件：未计划
+        final String QUERY_NOT_COMPLETED_WHERE = "(is_complete = 0)";//条件：未完成
+        final String QUERY_TAG_WHERE = "id IN (SELECT DISTINCT id from TodoTag WHERE tag = ?)";
+
+        StringBuilder selection = new StringBuilder();//条件语句
+        List<String> selectionArgs = new ArrayList<>();//查询参数
+        //尝试添加查询条件1 ---- 来自下拉框中的类型
+        switch (queryType) {
+            case QUERY_TODAY:
+                selection.append(QUERY_TODAY_WHERE);
+                //添加一个查询参数：今天的日期
+                selectionArgs.add(CalendarUtil.calendarToString(
+                        Calendar.getInstance(), TodoDBHelper.END_DATE_PATTERN));
+                break;
+            case QUERY_IMPORTANT:
+                selection.append(QUERY_IMPORTANT_WHERE);
+                break;
+            case QUERY_HAS_PLANNED:
+                selection.append(QUERY_HAS_PLANNED_WHERE);
+                break;
+            case QUERY_HAS_NOT_PLANNED:
+                selection.append(QUERY_HAS_NOT_PLANNED_WHERE);
+                break;
+        }
+        //尝试添加查询条件2 ---- 来自“显示已完成”复选框（只显示未完成）
+        if (!showCompleted) {
+            if (selection.length() != 0) {
+                selection.append(" AND ");
+            }
+            selection.append(QUERY_NOT_COMPLETED_WHERE);
+        }
+        //尝试添加查询条件3 ---- 要求包含某个标签
+        if (filterTag != null) {
+            if (selection.length() != 0) {
+                selection.append(" AND ");
+            }
+            selection.append(QUERY_TAG_WHERE);
+            //添加一个查询参数：标签
+            selectionArgs.add(filterTag);
+        }
+        return db.query(
+                "TodoList", null,
+                selection.toString(), selectionArgs.toArray(new String[0]),
+                null, null,
+                "is_complete ASC, end_date ASC");
+    }
+
+    /**
+     * 从Cursor中获取装有TodoListItem对象的List
+     *
+     * @param cursor Cursor对象
+     * @return 装有对象的List
+     */
+    private static List<TodoListItem> getTodoItemsFromCursor(Cursor cursor) {
+        List<TodoListItem> items = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                int id;
+                String title;
+                boolean isComplete;
+                boolean isStar;
+                String alarmStr;
+                String note;
+                String endDateStr;
+                String createTimeStr;
+                String completeTimeStr;
+
+                id = cursor.getInt(cursor.getColumnIndex("id"));
+                title = cursor.getString(cursor.getColumnIndex("title"));
+                isComplete = cursor.getInt(cursor.getColumnIndex("is_complete")) == 1;
+                isStar = cursor.getInt(cursor.getColumnIndex("is_star")) == 1;
+                alarmStr = cursor.getString(cursor.getColumnIndex("alarm"));
+                note = cursor.getString(cursor.getColumnIndex("note"));
+                endDateStr = cursor.getString(cursor.getColumnIndex("end_date"));
+                createTimeStr = cursor.getString(cursor.getColumnIndex("create_time"));
+                completeTimeStr = cursor.getString(cursor.getColumnIndex("complete_time"));
+                TodoListItem item = new TodoListItem(id, title, isComplete, isStar, alarmStr,
+                        note, endDateStr, createTimeStr, completeTimeStr);
+                items.add(item);
+            } while (cursor.moveToNext());
+        }
+        return items;
+    }
+
+
+    /**
+     * 查找控件的引用
+     */
+    private void findViews() {
+        todoListRecyclerView = mRootView.findViewById(R.id.todo_list_recycler_view);
+        typeSpinner = mRootView.findViewById(R.id.todo_page_type_spinner);
+        filterArea = mRootView.findViewById(R.id.todo_page_filter_area);
+    }
+
+    /**
+     * 设置RecyclerView的布局、Adapter、动画
+     */
+    private void recyclerViewSetting() {
+        //布局
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        todoListRecyclerView.setLayoutManager(layoutManager);
+        //Adapter
+        todoItemAdapter = new TodoItemAdapter(list);
+        todoItemAdapter.setShowCompleted(showCompleted);//对adapter设置是否显示已完成
+        todoListRecyclerView.setAdapter(todoItemAdapter);
         //动画
         AnimationSet animation = MyLayoutAnimationHelper.getAnimationSetAlpha();
         LayoutAnimationController controller = new LayoutAnimationController(animation);
         controller.setOrder(LayoutAnimationController.ORDER_NORMAL);
         controller.setDelay(0.1f);
         todoListRecyclerView.setLayoutAnimation(controller);
+    }
 
-        todoListRecyclerView.setLayoutManager(layoutManager);
-        todoListRecyclerView.setAdapter(todoItemAdapter);
-
-        //spinner相关
-        AppCompatSpinner typeSpinner = mRootView.findViewById(R.id.todo_page_type_spinner);
-        typeSpinner.setSelection(queryType);
-        //设置选中的监听器
+    /**
+     * Spinner设置初始选中项、设置监听器
+     */
+    private void spinnerSetting() {
+        typeSpinner.setSelection(queryType);//设置初始选中项
+        //设置监听器
         typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent,
@@ -140,7 +350,7 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
                             "todo_preference", Context.MODE_PRIVATE).edit();
                     editor.putInt("select_todo_type", queryType);//存储偏好
                     editor.apply();
-                    refresh();
+                    changeQueryTypeOrFilterTag();
                 }
             }
 
@@ -148,10 +358,12 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
 
-        //筛选器区域
-        LinearLayout filterArea = mRootView.findViewById(R.id.todo_page_filter_area);
-        //设置点击筛选器区域的事件
+    /**
+     * 设置筛选器按钮点击事件、对话框事件
+     */
+    private void filterSetting() {
         filterArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,11 +383,11 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
                                 "todo_preference", Context.MODE_PRIVATE).edit();
                         editor.putBoolean("show_completed", showCompleted);//存储偏好
                         editor.apply();
-                        refresh();
+                        changeQueryTypeOrFilterTag();
                     }
                 });
 
-                //设置点击取消按钮的事件
+                //设置点击取消按钮的事件：什么都不干
                 dialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -183,233 +395,139 @@ public class TodoFragment extends LazyLoadFragment/*BaseFragment*/ {
                     }
                 });
 
-                //设置管理标签按钮的事件
+                //设置“管理标签”按钮的事件
                 dialogBuilder.setNeutralButton(R.string.manage_todo_tags, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(mActivity, ManageTodoTagsActivity.class);
-                        startActivity(intent);
+                        ManageTodoTagsActivity.startTheActivityForResult(mActivity, mActivity, MainActivity.OPEN_MANAGE_TAG);
                     }
                 });
 
                 AlertDialog alertDialog = dialogBuilder.create();
                 alertDialog.show();//要先show()才能findViewById()
                 AppCompatSpinner spinner = alertDialog.findViewById(R.id.todo_filter_dialog_spinner);
-                final AppCompatCheckBox checkBox = alertDialog.findViewById(R.id.todo_filter_dialog_checkbox);
-                if (spinner != null) {//TODO may null
-                    tempFilterTag = filterTag;
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(mActivity,
-                            android.R.layout.simple_spinner_item, filterList);
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinner.setAdapter(adapter);
-                    int setSelectionPosition;//下拉菜单初始选中位置
-                    if (filterTag == null) {
-                        setSelectionPosition = 0;//无筛选标签
-                    } else {
-                        setSelectionPosition = filterList.indexOf(filterTag);
-                    }
-                    spinner.setSelection(setSelectionPosition);
-                    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent,
-                                                   View view, int position, long id) {
-                            if (position == 0) {//选中的是“无筛选标签”
-                                tempFilterTag = null;
-                            } else {
-                                tempFilterTag = (String) parent.getSelectedItem();
-                            }
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-                        }
-                    });
+                AppCompatCheckBox checkBox = alertDialog.findViewById(R.id.todo_filter_dialog_checkbox);
+                if (spinner != null) {
+                    filterDialogSpinnerSetting(spinner);
                 }
                 if (checkBox != null) {
-                    tempShowCompleted = showCompleted;
-                    checkBox.setChecked(tempShowCompleted);
-                    checkBox.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            tempShowCompleted = !tempShowCompleted;
-                        }
-                    });
+                    filterDialogCheckboxSetting(checkBox);
                 }
             }
         });
-
-        LogUtil.d("old_phone", "load view in method ok");
     }
 
     /**
-     * @return 返回该Fragment的layout id
+     * 设置对话框中Spinner的初始选中和监听器
      */
-    @Override
-    protected int getLayoutId() {
-        return R.layout.fragment_todo;
-    }
-
-    /**
-     * 按相应要求进行SQL查询并返回Cursor对象
-     *
-     * @param db 数据库对象
-     * @return 查询结果的Cursor对象
-     */
-    private Cursor createQueryCursor(SQLiteDatabase db) {
-        final String SELECT_FROM = "SELECT id, title, is_complete, is_star, alarm, note, date FROM TodoList";
-
-        final String QUERY_TODAY_WHERE = "(date = ?)";//查询今天的待办
-        final String QUERY_IMPORTANT_WHERE = "(is_star = 1)";//查询重要的待办
-        final String QUERY_HAS_PLANNED_WHERE = "(NOT date IS NULL)";//查询已计划的待办
-        final String QUERY_HAS_NOT_PLANNED_WHERE = "(date IS NULL)";//查询未计划的待办
-        final String QUERY_ALL_WHERE = "(NOT id IS NULL)";//查询全部
-
-        final String NOT_SHOW_COMPLETED_WHERE = "(is_complete = 0)";//不显示已完成
-
-        final String FILTER_TAG_WHERE = "(tag GLOB ?)";//筛选出含有某个标签的待办
-
-        final String ORDER_BY = "ORDER BY is_complete ASC, date ASC";
-
-        List<String> selectionArgs = new ArrayList<>();//查询参数
-        StringBuilder querySQL = new StringBuilder(SELECT_FROM);
-        querySQL.append(" WHERE ");
-        switch (queryType) {
-            case QUERY_TODAY:
-                querySQL.append(QUERY_TODAY_WHERE);
-                //添加一个查询参数：今天的日期
-                Calendar today = Calendar.getInstance();
-                today.setTime(new Date());
-                selectionArgs.add(CalendarUtil.calendarToString(today, "yyyy-MM-dd"));
-                break;
-            case QUERY_IMPORTANT:
-                querySQL.append(QUERY_IMPORTANT_WHERE);
-                break;
-            case QUERY_HAS_PLANNED:
-                querySQL.append(QUERY_HAS_PLANNED_WHERE);
-                break;
-            case QUERY_HAS_NOT_PLANNED:
-                querySQL.append(QUERY_HAS_NOT_PLANNED_WHERE);
-                break;
-            default://QUERY_ALL
-                querySQL.append(QUERY_ALL_WHERE);
-                break;
+    private void filterDialogSpinnerSetting(AppCompatSpinner spinner) {
+        tempFilterTag = filterTag;
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(mActivity,
+                android.R.layout.simple_spinner_item, filterList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        int setSelectionPosition;//下拉菜单初始选中位置
+        if (filterTag == null) {
+            setSelectionPosition = 0;//无筛选标签
+        } else {
+            setSelectionPosition = filterList.indexOf(filterTag);
         }
-        if (!showCompleted) {//若要求不展示已完成待办，则加一个AND条件
-            querySQL.append(" AND ").append(NOT_SHOW_COMPLETED_WHERE);
-        }
-        //filterTag = "ttt";
-        if (filterTag != null) {//筛选标签
-            querySQL.append(" AND ").append(FILTER_TAG_WHERE);
-            //添加一个查询参数：标签
-            selectionArgs.add("* " + filterTag + " *");
-        }
-        querySQL.append(ORDER_BY);
-        return db.rawQuery(querySQL.toString(), selectionArgs.toArray(new String[0]));
-    }
-
-    /**
-     * 从数据库中载入数据
-     */
-    private void getDataFromDatabase() {
-        list.clear();
-        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(getContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = createQueryCursor(db);
-        if (cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
-                String title = cursor.getString(cursor.getColumnIndex("title"));
-                boolean isComplete = cursor.getInt(cursor.getColumnIndex("is_complete")) == 1;
-                boolean isStar = cursor.getInt(cursor.getColumnIndex("is_star")) == 1;
-                String note = cursor.getString(cursor.getColumnIndex("note"));
-                boolean hasAlarm = !cursor.isNull(cursor.getColumnIndex("alarm"));
-                Calendar date = null;
-                if (!cursor.isNull(cursor.getColumnIndex("date"))) {
-                    String dateString = cursor.getString(cursor.getColumnIndex("date"));
-                    date = CalendarUtil.stringToCalendar(dateString, "yyyy-MM-dd");
+        spinner.setSelection(setSelectionPosition);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent,
+                                       View view, int position, long id) {
+                if (position == 0) {//选中的是“无筛选标签”
+                    tempFilterTag = null;
+                } else {
+                    tempFilterTag = (String) parent.getSelectedItem();
                 }
-                TodoListItem item = new TodoListItem(id, title, isComplete, isStar, hasAlarm, note, date);
-                list.add(item);
-            } while (cursor.moveToNext());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    /**
+     * 设置对话框中“显示已完成”复选框的初始选中、监听器
+     */
+    private void filterDialogCheckboxSetting(AppCompatCheckBox checkBox) {
+        tempShowCompleted = showCompleted;
+        checkBox.setChecked(tempShowCompleted);
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tempShowCompleted = !tempShowCompleted;
+            }
+        });
+    }
+
+
+    /**
+     * （从详情返回）新增或点击刷新
+     */
+    private static class AddNewItemOrRefreshTask extends AsyncTask<Void, Integer, Boolean> {
+        private WeakReference<TodoFragment> weakFragment;
+
+        AddNewItemOrRefreshTask(TodoFragment fragment) {
+            this.weakFragment = new WeakReference<>(fragment);
         }
-        cursor.close();
-        LogUtil.d("old_phone", "todo list db ok");
-    }
 
-    /**
-     * 从数据库中给筛选列表项装填数据
-     */
-    private void getDataFromTagDataBase() {
-        //给筛选列表项装填数据
-        filterList.clear();
-        filterList.add(mActivity.getString(R.string.do_not_use_tag_filter));
-        //从数据库中读取标签
-        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(getContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM TodoTag", null);
-        if (cursor.moveToFirst()) {
-            do {
-                filterList.add(cursor.getString(cursor.getColumnIndex("tag_name")));
-            } while (cursor.moveToNext());
+        @Override
+        protected void onPreExecute() {
         }
-        cursor.close();
-    }
 
-    /**
-     * 刷新整个List并通知RecyclerView刷新视图
-     */
-    public void refresh() {
-        //TODO bug
-        getDataFromDatabase();
-        getDataFromTagDataBase();
-        //loadData();
-        todoItemAdapter.notifyDataSetChanged();
-        //todoListRecyclerView.getAdapter().notifyDataSetChanged();
-        todoListRecyclerView.scheduleLayoutAnimation();
-        //TODO
-    }
-
-    /**
-     * 通知有条目被更新
-     *
-     * @param listIndex  条目在List中的位置
-     * @param databaseId 条目在数据库中的id
-     */
-    public void updateChange(int listIndex, int databaseId) {
-        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(getContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT id, title, is_complete, is_star, alarm, note, date FROM TodoList WHERE id = ?",
-                new String[]{"" + databaseId});
-        cursor.moveToFirst();
-        int id = cursor.getInt(cursor.getColumnIndex("id"));
-        String title = cursor.getString(cursor.getColumnIndex("title"));
-        boolean isComplete = cursor.getInt(cursor.getColumnIndex("is_complete")) == 1;
-        boolean isStar = cursor.getInt(cursor.getColumnIndex("is_star")) == 1;
-        String note = cursor.getString(cursor.getColumnIndex("note"));
-        boolean hasAlarm = !cursor.isNull(cursor.getColumnIndex("alarm"));
-        Calendar date = null;
-        if (!cursor.isNull(cursor.getColumnIndex("date"))) {
-            String dateString = cursor.getString(cursor.getColumnIndex("date"));
-            date = CalendarUtil.stringToCalendar(dateString, "yyyy-MM-dd");
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            TodoFragment fragment = weakFragment.get();
+            fragment.fillItemsWithoutTag();
+            fragment.fillItemsTags();
+            fragment.fillTags();
+            return true;
         }
-        TodoListItem item = new TodoListItem(id, title, isComplete, isStar, hasAlarm, note, date);
-        list.set(listIndex, item);
-        cursor.close();
 
-        todoItemAdapter.notifyItemChanged(listIndex);
-
-        //更新标签的数据
-        getDataFromTagDataBase();//TODO 异步加载数据
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                TodoFragment fragment = weakFragment.get();
+                fragment.todoItemAdapter.notifyDataSetChanged();
+                fragment.todoListRecyclerView.scheduleLayoutAnimation();
+            }
+        }
     }
 
     /**
-     * 通知有条目被移除
-     *
-     * @param listIndex 被移除的条目在List中的位置
+     * 更改查询待办类型或更改筛选标签
      */
-    public void removeItemUpdate(int listIndex) {
-        list.remove(listIndex);
-        todoItemAdapter.notifyItemRemoved(listIndex);
-    }
+    private static class ChangeQueryTypeOrFilterTagTask extends AsyncTask<Void, Integer, Boolean> {
+        private WeakReference<TodoFragment> weakFragment;
 
+        ChangeQueryTypeOrFilterTagTask(TodoFragment fragment) {
+            this.weakFragment = new WeakReference<>(fragment);
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            TodoFragment fragment = weakFragment.get();
+            fragment.fillItemsWithoutTag();
+            fragment.fillItemsTags();
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                TodoFragment fragment = weakFragment.get();
+                fragment.todoItemAdapter.notifyDataSetChanged();
+                fragment.todoListRecyclerView.scheduleLayoutAnimation();
+                LogUtil.d("data", "data set change");
+            }
+        }
+    }
 }
