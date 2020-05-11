@@ -1,10 +1,5 @@
 package com.my.smartplanner.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,9 +8,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.button.MaterialButton;
 import com.jaeger.library.StatusBarUtil;
@@ -274,6 +273,9 @@ public class TomatoOngoingActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.tomato_ongoing_toolbar);
     }
 
+    /**
+     * 设置状态栏和导航栏
+     */
     private void statusBarAndNavigationBarSetting(){
         StatusBarUtil.setColor(this, getResources()
                 .getColor(R.color.tomato_ongoing_dark_bg), 0);

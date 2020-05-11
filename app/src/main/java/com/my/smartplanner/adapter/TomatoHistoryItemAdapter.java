@@ -77,11 +77,9 @@ public class TomatoHistoryItemAdapter extends RecyclerView.Adapter<TomatoHistory
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO click outer option
-                //Toast.makeText(mContext, "click card!", Toast.LENGTH_SHORT).show();
                 AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
                 dialog.setTitle(R.string.view_detail);
-                int position = holder.getAdapterPosition();
+                int position = holder.getBindingAdapterPosition();
                 TomatoHistoryListItem item = tomatoHistories.get(position);
                 dialog.setMessage(createDialogMsg(item, mContext));
                 dialog.show();

@@ -1,6 +1,7 @@
 package com.my.smartplanner.util;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,6 +12,7 @@ import java.util.Date;
  * 日期转换等工具
  */
 public class CalendarUtil {
+    //检测日期先后顺序
     /**
      * 返回值：日期是昨天
      */
@@ -71,6 +73,8 @@ public class CalendarUtil {
         }
     }
 
+
+    //比较日期是否同一日
     /**
      * 返回值：相同
      */
@@ -115,6 +119,7 @@ public class CalendarUtil {
         return DATE_COMPARE_SAME;
     }
 
+
     /**
      * Calendar对象转换成String
      *
@@ -122,10 +127,14 @@ public class CalendarUtil {
      * @param pattern  指定格式化方式
      * @return 转换出的String字符串
      */
-    public static String calendarToString(@NonNull Calendar calendar, @NonNull String pattern) {
+    public static String calendarToString(@Nullable Calendar calendar, @NonNull String pattern) {
+        if (calendar == null) {
+            return null;
+        }
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(calendar.getTime());
     }
+
 
     /**
      * String转换成Calendar
@@ -134,7 +143,10 @@ public class CalendarUtil {
      * @param pattern 指定格式化方式
      * @return 转换出的Calendar对象
      */
-    public static Calendar stringToCalendar(String string, String pattern) {
+    public static Calendar stringToCalendar(@Nullable String string, @NonNull String pattern) {
+        if (string == null) {
+            return null;
+        }
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         Date date = null;
         try {
@@ -149,6 +161,7 @@ public class CalendarUtil {
         return calendar;
     }
 
+
     /**
      * 把分钟转换为毫秒
      *
@@ -159,18 +172,35 @@ public class CalendarUtil {
         return minute * 60 * 1000;
     }
 
+
+    /**
+     * <p>该时间是否是早上(6:00~13:00)</p>
+     * <p>在番茄钟列表中使用</p>
+     */
     public static boolean isTomatoMorning(Calendar calendar) {
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         return hourOfDay >= 6 && hourOfDay < 13;
     }
 
+
+    /**
+     * <p>该时间是否是下午(13:00~18:00)</p>
+     * <p>在番茄钟列表中使用</p>
+     */
     public static boolean isTomatoAfternoon(Calendar calendar) {
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         return hourOfDay >= 13 && hourOfDay < 18;
     }
 
+
+    /**
+     * <p>该时间是否是晚上(18:00~6:00)</p>
+     * <p>在番茄钟列表中使用</p>
+     */
     public static boolean isTomatoNight(Calendar calendar) {
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         return hourOfDay >= 18 || hourOfDay < 6;
     }
+
+
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--待办Fragment布局-->
+<?xml version="1.0" encoding="utf-8"?><!--待办Fragment布局-->
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -26,13 +25,13 @@
                 android:id="@+id/todo_page_type_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_gravity="center_vertical"
-                android:entries="@array/todo_types"
                 android:dropDownWidth="150dp"
-                android:spinnerMode="dropdown"/>
+                android:entries="@array/todo_types"
+                android:gravity="center"
+                android:spinnerMode="dropdown" />
             <!--android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"-->
 
@@ -40,38 +39,42 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <LinearLayout
                 android:id="@+id/todo_page_filter_area"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?android:attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:textColor="@color/grey"
-                    android:textSize="15sp"
-                    android:text="@string/filter"/>
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
 
                 <ImageView
+                    android:id="@+id/todo_page_filter_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:src="@mipmap/ic_filter_list_black"
                     android:tint="@color/grey"
-                    tools:ignore="ContentDescription"/>
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/todo_page_filter_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/filter"
+                    android:textColor="@color/grey"
+                    android:textSize="15sp" />
 
             </LinearLayout>
 
@@ -81,13 +84,13 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/light_grey"/>
+            android:background="@color/light_grey" />
 
         <!--待办列表-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/todo_list_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

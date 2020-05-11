@@ -1,17 +1,17 @@
 package com.my.smartplanner.item;
 
 public class TodoTagListItem {
-    private String tagName;
+    private String tag;
 
-    public TodoTagListItem(String tagName) {
-        this.tagName = tagName;
+    public TodoTagListItem(String tag) {
+        this.tag = tag;
     }
 
-    public String getTagName() {
-        return tagName;
+    public String getTag() {
+        return tag;
     }
 
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }
