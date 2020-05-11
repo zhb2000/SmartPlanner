@@ -31,9 +31,19 @@ import java.util.Locale;
  */
 public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHolder> {
 
-    private Context mContext = null;//上下文
-    private List<TodoListItem> todoListItems;//待办条目列表
-    private boolean showCompleted;//是否显示已完成的条目
+    private Context mContext = null;
+    /**
+     * 待办条目列表
+     */
+    private List<TodoListItem> items;
+    /**
+     * 显示已完成的条目
+     */
+    private boolean showCompleted;
+    /**
+     * 只显示星标
+     */
+    private boolean onlyShowStar;
 
 
     /**
@@ -75,10 +85,10 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
     /**
      * 适配器的构造函数
      *
-     * @param todoListItems 装有待办子项实体类的List
+     * @param items 装有待办子项实体类的List
      */
-    public TodoItemAdapter(List<TodoListItem> todoListItems) {
-        this.todoListItems = todoListItems;
+    public TodoItemAdapter(List<TodoListItem> items) {
+        this.items = items;
     }
 
 
@@ -100,7 +110,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 boolean isComplete = holder.completeCheckBox.isChecked();
-                TodoListItem item = todoListItems.get(holder.getBindingAdapterPosition());
+                TodoListItem item = items.get(holder.getBindingAdapterPosition());
                 setCompleteStatus(isComplete, item, holder);
             }
         });
@@ -109,7 +119,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 boolean isStar = holder.starCheckBox.isChecked();
-                TodoListItem item = todoListItems.get(holder.getBindingAdapterPosition());
+                TodoListItem item = items.get(holder.getBindingAdapterPosition());
                 setStarStatus(isStar, item, holder);
             }
         });
@@ -118,7 +128,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 int position = holder.getBindingAdapterPosition();//获取条目的下标
-                TodoListItem item = todoListItems.get(position);
+                TodoListItem item = items.get(position);
                 TodoDetailActivity.startTheActivityForResultInEdit(
                         mContext, position, item,
                         (Activity) mContext, MainActivity.OPEN_TODO_DETAIL);
@@ -134,7 +144,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
      */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        TodoListItem item = todoListItems.get(position);//获取实体类的对象
+        TodoListItem item = items.get(position);//获取实体类的对象
         holder.idInDB = item.getId();
         holder.title.setText(item.getTitle());//设置视图中的标题
         setCompleteUI(item.getIsComplete(), holder);
@@ -144,7 +154,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return todoListItems.size();
+        return items.size();
     }
 
     /**
@@ -156,13 +166,26 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
         this.showCompleted = showCompleted;
     }
 
+    /**
+     * 设置是否只显示星标条目
+     */
+    public void setOnlyShowStar(boolean onlyShowStar) {
+        this.onlyShowStar = onlyShowStar;
+    }
+
 
     /**
-     * 更改完成状态：修改item对象、修改UI、修改数据库
+     * 更改完成状态：修改item对象、修改UI、考虑从列表中移除、修改数据库
      */
     private void setCompleteStatus(boolean isComplete, final TodoListItem item, ViewHolder holder) {
         item.currentComplete(isComplete);
         setCompleteUI(isComplete, holder);
+        if (!showCompleted && isComplete) {
+            //当前模式为不显示已完成任务
+            int position = holder.getBindingAdapterPosition();//获取条目的下标
+            items.remove(position);
+            notifyItemRemoved(position);
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -172,11 +195,16 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
     }
 
     /**
-     * 更改星标状态：修改item对象、修改UI、修改数据库
+     * 更改星标状态：修改item对象、修改UI、考虑从列表移除、修改数据库
      */
     private void setStarStatus(boolean isStar, final TodoListItem item, ViewHolder holder) {
         item.setIsStar(isStar);
         setStarUI(isStar, holder);
+        if (onlyShowStar && !isStar) {
+            int position = holder.getBindingAdapterPosition();
+            items.remove(position);
+            notifyItemRemoved(position);
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -199,12 +227,6 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.ViewHo
             //变为完成
             titleText.setTextColor(mContext.getResources().getColor(R.color.grey));//文字颜色变成灰色
             titleText.setPaintFlags(titleText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);//设置删除线
-            //当前模式为不显示已完成任务
-            if (!showCompleted) {
-                int position = holder.getBindingAdapterPosition();//获取条目的下标
-                todoListItems.remove(position);
-                notifyItemRemoved(position);
-            }
         } else {
             //变为未完成
             titleText.setTextColor(mContext.getResources().getColor(R.color.black));//文字颜色变成黑色

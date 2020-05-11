@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
@@ -22,15 +23,15 @@ import java.util.TimeZone;
 public class SublimePickerFragment extends AppCompatDialogFragment {
     // Date & Time formatter used for formatting
     // text on the switcher button
-    DateFormat mDateFormatter, mTimeFormatter;
+    private DateFormat mDateFormatter, mTimeFormatter;
 
     // Picker
-    SublimePicker mSublimePicker;
+    private SublimePicker mSublimePicker;
 
     // Callback to activity
-    Callback mCallback;
+    private Callback mCallback;
 
-    SublimeListenerAdapter mListener = new SublimeListenerAdapter() {
+    private SublimeListenerAdapter mListener = new SublimeListenerAdapter() {
         @Override
         public void onCancelled() {
             if (mCallback != null) {
@@ -73,7 +74,7 @@ public class SublimePickerFragment extends AppCompatDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /*try {
             //getActivity().getLayoutInflater()
                     //.inflate(R.layout.sublime_recurrence_picker, new FrameLayout(getActivity()), true);

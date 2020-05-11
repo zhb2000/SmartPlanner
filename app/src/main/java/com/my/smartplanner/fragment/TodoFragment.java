@@ -115,8 +115,17 @@ public class TodoFragment extends LazyLoadFragment {
      * 从详情返回，修改
      */
     public void updateItem(int listIndex, TodoListItem item) {
-        list.set(listIndex, item);
-        todoItemAdapter.notifyItemChanged(listIndex);
+        if (!showCompleted && item.getIsComplete()) {
+            list.remove(listIndex);
+            todoItemAdapter.notifyItemRemoved(listIndex);
+        } else if (queryType == QUERY_IMPORTANT && !item.getIsStar()) {
+            list.remove(listIndex);
+            todoItemAdapter.notifyItemRemoved(listIndex);
+        } else {
+            list.set(listIndex, item);
+            todoItemAdapter.notifyItemChanged(listIndex);
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -331,6 +340,7 @@ public class TodoFragment extends LazyLoadFragment {
         //Adapter
         todoItemAdapter = new TodoItemAdapter(list);
         todoItemAdapter.setShowCompleted(showCompleted);//对adapter设置是否显示已完成
+        todoItemAdapter.setOnlyShowStar(queryType == QUERY_IMPORTANT);//对adapter设置是否只显示星标
         todoListRecyclerView.setAdapter(todoItemAdapter);
         //动画
         AnimationSet animation = MyLayoutAnimationHelper.getAnimationSetAlpha();
@@ -359,6 +369,7 @@ public class TodoFragment extends LazyLoadFragment {
                             "todo_preference", Context.MODE_PRIVATE).edit();
                     editor.putInt("select_todo_type", queryType);//存储偏好
                     editor.apply();
+                    todoItemAdapter.setOnlyShowStar(queryType == QUERY_IMPORTANT);//给Adapter传递消息
                     changeQueryTypeOrFilterTag();
                 }
             }
