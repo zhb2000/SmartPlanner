@@ -18,10 +18,10 @@
             android:icon="@mipmap/ic_chart_black"
             android:title="@string/statistic" />
 
-        <item
-            android:id="@+id/nav_calendar"
-            android:icon="@mipmap/ic_calendar_black"
-            android:title="@string/calendar" />
+        <!--        <item-->
+        <!--            android:id="@+id/nav_calendar"-->
+        <!--            android:icon="@mipmap/ic_calendar_black"-->
+        <!--            android:title="@string/calendar" />-->
     </group>
 
     <group
@@ -32,9 +32,9 @@
             android:icon="@mipmap/ic_settings_applications_outline_black"
             android:title="@string/setting" />
 
-        <item
-            android:id="@+id/nav_about"
-            android:icon="@mipmap/ic_info_black"
-            android:title="@string/about" />
+        <!--        <item-->
+        <!--            android:id="@+id/nav_about"-->
+        <!--            android:icon="@mipmap/ic_info_black"-->
+        <!--            android:title="@string/about" />-->
     </group>
 </menu>

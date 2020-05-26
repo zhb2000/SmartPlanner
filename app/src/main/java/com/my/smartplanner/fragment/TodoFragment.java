@@ -25,11 +25,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
-import com.my.smartplanner.MyLayoutAnimationHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.activity.MainActivity;
 import com.my.smartplanner.activity.ManageTodoTagsActivity;
 import com.my.smartplanner.adapter.TodoItemAdapter;
+import com.my.smartplanner.animation.MyLayoutAnimationHelper;
 import com.my.smartplanner.item.TodoListItem;
 import com.my.smartplanner.util.CalendarUtil;
 import com.my.smartplanner.util.LogUtil;

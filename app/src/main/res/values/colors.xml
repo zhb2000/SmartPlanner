@@ -25,4 +25,10 @@
     <color name="tomato_ongoing_dark_bg">#202125</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="hint_text_trans_dark">#B3FFFFFF</color>
+    <!--mx's color-->
+    <color name="color_gray">#BED9EB</color>
+    <color name="color_blue">#005FEE</color>
+    <color name="color_green">#85E0BC</color>
+    <color name="color_white">#FFFFFF</color>
+    <color name="health_background">#33D6FF</color>
 </resources>
