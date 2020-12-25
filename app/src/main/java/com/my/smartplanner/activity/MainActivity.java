@@ -22,6 +22,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.jaeger.library.StatusBarUtil;
 import com.my.smartplanner.R;
 import com.my.smartplanner.adapter.ViewPagerAdapter;
+import com.my.smartplanner.fragment.BlankFragment;
 import com.my.smartplanner.fragment.TodoFragment;
 import com.my.smartplanner.item.TodoListItem;
 
@@ -45,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton addFab;
 
     //TODO 怎样更好地获取fragment的实例
-    private TodoFragment todoFragment1;
+    private BlankFragment blankFragmentLeft;
     private TodoFragment todoPageFragment;
-    private TodoFragment todoFragment3;
+    private BlankFragment blankFragmentRight;
 
 
     @Override
@@ -173,19 +174,20 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(startTomatoActivityIntent);
                         break;
                     case R.id.nav_statistic:
-                        Intent startStatisticActivityIntent = new Intent(MainActivity.this, StatisticActivity.class);
-                        startActivity(startStatisticActivityIntent);
+                        //Intent startStatisticActivityIntent = new Intent(MainActivity.this, StatisticActivity.class);
+                        //startActivity(startStatisticActivityIntent);
+                        startActivity(new Intent(MainActivity.this, HealthActivity.class));
                         break;
-                    case R.id.nav_calendar:
-                        //do something
-                        break;
+//                    case R.id.nav_calendar:
+//                        //do something
+//                        break;
                     case R.id.nav_setting:
                         Intent startSettingActivityIntent = new Intent(MainActivity.this, SettingActivity.class);
                         startActivity(startSettingActivityIntent);
                         break;
-                    case R.id.nav_about:
-                        //do something
-                        break;
+//                    case R.id.nav_about:
+//                        //do something
+//                        break;
                 }
                 return true;
             }
@@ -229,13 +231,13 @@ public class MainActivity extends AppCompatActivity {
      * tab栏和页面设置
      */
     private void tabPageSetting() {
-        todoFragment1 = TodoFragment.newInstance();
+        blankFragmentLeft = BlankFragment.newInstance();
         todoPageFragment = TodoFragment.newInstance();
-        todoFragment3 = TodoFragment.newInstance();
+        blankFragmentRight = BlankFragment.newInstance();
         List<Fragment> fragments = new ArrayList<>();
-        fragments.add(todoFragment1);
+        fragments.add(blankFragmentLeft);
         fragments.add(todoPageFragment);
-        fragments.add(todoFragment3);
+        fragments.add(blankFragmentRight);
         List<String> titleList = new ArrayList<>();
         titleList.add(getString(R.string.advice));
         titleList.add(getString(R.string.todo));

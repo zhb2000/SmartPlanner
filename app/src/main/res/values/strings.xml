@@ -78,5 +78,6 @@
     <string name="tomato_working">工作中</string>
     <string name="tomato_resting">休息中</string>
     <string name="skip_rest">跳过休息</string>
+    <string name="empty_fragment_text">尚未实现</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package com.my.smartplanner;
+package com.my.smartplanner.animation;
 
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
