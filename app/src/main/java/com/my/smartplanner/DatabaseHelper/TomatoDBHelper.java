@@ -2,7 +2,6 @@ package com.my.smartplanner.DatabaseHelper;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -26,6 +25,7 @@ public class TomatoDBHelper extends SQLiteOpenHelper {
             + "clock_cnt INTEGER NOT NULL, "//计划的重复次数
             + "start_time TEXT NOT NULL, "//开始时间，格式：yyyy-MM-dd HH:mm:ss
             + "end_time TEXT NOT NULL)";//结束时间，格式：yyyy-MM-dd HH:mm:ss
+
     /**
      * 列名
      */
@@ -41,18 +41,22 @@ public class TomatoDBHelper extends SQLiteOpenHelper {
             CLOCK_CNT_COL = "clock_cnt",
             START_TIME_COL = "start_time",
             END_TIME_COL = "end_time";
+
     /**
      * 最新的数据库版本号
      */
-    public static final int LATEST_VERSION = 1;
+    private static final int LATEST_VERSION = 1;
+
     /**
      * 数据库文件名
      */
-    public static final String DB_NAME = "TomatoDatabase.db";
+    private static final String DB_NAME = "TomatoDatabase.db";
+
     /**
      * 保存创建对象时的 Context 参数
      */
     private Context mContext;
+
 
     /**
      * 获取可写的数据库
@@ -101,7 +105,7 @@ public class TomatoDBHelper extends SQLiteOpenHelper {
      *
      * @param context 传入当前的Context
      */
-    public TomatoDBHelper(Context context) {
+    private TomatoDBHelper(Context context) {
         super(context, DB_NAME, null, LATEST_VERSION);
         mContext = context;
     }

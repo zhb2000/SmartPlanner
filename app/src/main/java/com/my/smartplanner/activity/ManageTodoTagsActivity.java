@@ -1,5 +1,14 @@
 package com.my.smartplanner.activity;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,17 +16,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.Toast;
-
 import com.my.smartplanner.DatabaseHelper.TodoDBHelper;
 import com.my.smartplanner.R;
-import com.my.smartplanner.item.TodoTagListItem;
 import com.my.smartplanner.adapter.TodoTagItemAdapter;
+import com.my.smartplanner.item.TodoTagListItem;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -28,9 +30,15 @@ import java.util.List;
  */
 public class ManageTodoTagsActivity extends AppCompatActivity {
 
+    private boolean modified = false;
     private List<TodoTagListItem> itemList = new LinkedList<>();
     private RecyclerView recyclerView;
     private Toolbar toolbar;
+
+    public static void startTheActivityForResult(Context packageContext, Activity activity, int requestCode) {
+        Intent intent = new Intent(packageContext, ManageTodoTagsActivity.class);
+        activity.startActivityForResult(intent, requestCode);
+    }
 
     /**
      * 获取控件实例
@@ -55,24 +63,24 @@ public class ManageTodoTagsActivity extends AppCompatActivity {
      * 装填List
      */
     private void fillList() {
-        TodoDBHelper dbHelper = TodoDBHelper.getDBHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM TodoTag", null);
+        SQLiteDatabase db = TodoDBHelper.getWDB(this);
+        Cursor cursor = db.rawQuery("SELECT DISTINCT tag FROM TodoTag", null);
         if (cursor.moveToFirst()) {
             do {
-                String tagName = cursor.getString(cursor.getColumnIndex("tag_name"));
-                TodoTagListItem item = new TodoTagListItem(tagName);
+                String tag = cursor.getString(cursor.getColumnIndex("tag"));
+                TodoTagListItem item = new TodoTagListItem(tag);
                 itemList.add(item);
             } while (cursor.moveToNext());
         }
         cursor.close();
+        db.close();
     }
 
     /**
      * 设置RecyclerView
      */
     private void recyclerViewSetting() {
-        TodoTagItemAdapter todoTagItemAdapter = new TodoTagItemAdapter(itemList);
+        TodoTagItemAdapter todoTagItemAdapter = new TodoTagItemAdapter(itemList, this);
         recyclerView.setAdapter(todoTagItemAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -90,7 +98,6 @@ public class ManageTodoTagsActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            //Toast.makeText(weakActivity.get(), "开始加载", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -117,12 +124,10 @@ public class ManageTodoTagsActivity extends AppCompatActivity {
         findViews();
         toolbarSetting();
         new LoadTask(this).execute();
-        //fillList();
-        //recyclerViewSetting();
     }
 
     /**
-     * 菜单选中事件
+     * 菜单选中事件：返回箭头
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -130,5 +135,15 @@ public class ManageTodoTagsActivity extends AppCompatActivity {
             super.onBackPressed();
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(modified ? RESULT_OK : RESULT_CANCELED);
+        super.onBackPressed();
+    }
+
+    public void setModified() {
+        modified = true;
     }
 }

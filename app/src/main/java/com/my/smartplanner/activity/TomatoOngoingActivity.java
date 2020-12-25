@@ -1,16 +1,23 @@
 package com.my.smartplanner.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.button.MaterialButton;
+import com.jaeger.library.StatusBarUtil;
 import com.my.smartplanner.DatabaseHelper.TomatoDBHelper;
 import com.my.smartplanner.R;
 import com.my.smartplanner.util.CalendarUtil;
@@ -23,6 +30,11 @@ import cn.iwgang.countdownview.CountdownView;
  * 番茄钟计时
  */
 public class TomatoOngoingActivity extends AppCompatActivity {
+
+    private static final String WORK_LEN_EXTRA_NAME = "workLen";
+    private static final String REST_LEN_EXTRA_NAME = "restLen";
+    private static final String CLOCK_CNT_EXTRA_NAME = "clockCnt";
+    private static final String TITLE_EXTRA_NAME = "title";
 
     /**
      * 工作时间长度（分钟）
@@ -70,15 +82,13 @@ public class TomatoOngoingActivity extends AppCompatActivity {
      */
     private Calendar endTime;
 
-    private static final String WORK_LEN_EXTRA_NAME = "workLen";
-    private static final String REST_LEN_EXTRA_NAME = "restLen";
-    private static final String CLOCK_CNT_EXTRA_NAME = "clockCnt";
-    private static final String TITLE_EXTRA_NAME = "title";
-
     /**
      * 倒计时组件
      */
     private CountdownView countdownView;
+    private TextView titleTextView;
+    private MaterialButton skipRestButton;
+    private Toolbar toolbar;
 
     /**
      * 启动番茄钟计时Activity
@@ -136,6 +146,8 @@ public class TomatoOngoingActivity extends AppCompatActivity {
         restTimeSum = 0;
         isAtWork = true;
         countdownView.start(CalendarUtil.minuteToMillisecond(workLen));
+        toolbar.setTitle(R.string.tomato_working);
+        skipRestButton.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -151,6 +163,8 @@ public class TomatoOngoingActivity extends AppCompatActivity {
                 isAtWork = false;//切换到休息模式
                 //休息计时开始
                 countdownView.start(CalendarUtil.minuteToMillisecond(restLen));
+                toolbar.setTitle(R.string.tomato_resting);
+                skipRestButton.setVisibility(View.VISIBLE);
             }
         } else {//之前休息，现在切换到工作
             restCnt++;//已完成休息 + 1
@@ -158,6 +172,8 @@ public class TomatoOngoingActivity extends AppCompatActivity {
             isAtWork = true;//切换到工作模式
             //工作计时开始
             countdownView.start(CalendarUtil.minuteToMillisecond(workLen));
+            toolbar.setTitle(R.string.tomato_working);
+            skipRestButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -171,6 +187,8 @@ public class TomatoOngoingActivity extends AppCompatActivity {
             isAtWork = true;//切换到工作模式
             // 工作计时开始
             countdownView.start(CalendarUtil.minuteToMillisecond(workLen));
+            toolbar.setTitle(R.string.tomato_working);
+            skipRestButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -200,7 +218,7 @@ public class TomatoOngoingActivity extends AppCompatActivity {
             tomatoTooShort();
         } else {
             int allTimeSum = workTimeSum + restTimeSum;
-            Toast.makeText(this, "失败，总时长：" + allTimeSum, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "失败，总时长：" + allTimeSum + "分钟", Toast.LENGTH_LONG).show();
             saveData(false);
             super.onBackPressed();
         }
@@ -233,22 +251,63 @@ public class TomatoOngoingActivity extends AppCompatActivity {
                 endTime);
     }
 
+    /**
+     * 设置Toolbar
+     */
+    private void toolbarSetting() {
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        }
+    }
+
+    /**
+     * 获取控件实例
+     */
+    private void findViews() {
+        titleTextView = findViewById(R.id.tomato_clock_ongoing_title);
+        countdownView = findViewById(R.id.tomato_clock_ongoing_countdown);
+        skipRestButton = findViewById(R.id.tomato_ongoing_skip_rest);
+        toolbar = findViewById(R.id.tomato_ongoing_toolbar);
+    }
+
+    /**
+     * 设置状态栏和导航栏
+     */
+    private void statusBarAndNavigationBarSetting(){
+        StatusBarUtil.setColor(this, getResources()
+                .getColor(R.color.tomato_ongoing_dark_bg), 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(getResources()
+                    .getColor(R.color.tomato_ongoing_dark_bg));
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        statusBarAndNavigationBarSetting();
         setContentView(R.layout.activity_tomato_ongoing);
-
         getTheExtra();
-        TextView titleTextView = findViewById(R.id.tomato_clock_ongoing_title);
-        countdownView = findViewById(R.id.tomato_clock_ongoing_countdown);
+        findViews();
+        toolbarSetting();
 
-        //title textview
+        //title text view
         titleTextView.setText(title);
         //countdown test
         countdownView.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
             @Override
             public void onEnd(CountdownView cv) {
                 switchStatus();
+            }
+        });
+        //skip rest toolbar
+        skipRestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TomatoOngoingActivity.this.skipRest();
             }
         });
 
@@ -277,5 +336,16 @@ public class TomatoOngoingActivity extends AppCompatActivity {
             }
         });
         dialogBuilder.show();
+    }
+
+    /**
+     * 菜单选中事件
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.onBackPressed();
+        }
+        return true;
     }
 }

@@ -5,8 +5,4 @@
         android:title="@string/refresh"/>
     <item android:id="@+id/todo_page_menu_manage_todo_tag"
         android:title="@string/manage_todo_tags"/>
-    <item android:id="@+id/todo_page_menu_add_many"
-        android:title="插入50条数据"/>
-    <item android:id="@+id/todo_page_menu_delete_all_todo"
-        android:title="删除所有todo数据"/>
 </menu>

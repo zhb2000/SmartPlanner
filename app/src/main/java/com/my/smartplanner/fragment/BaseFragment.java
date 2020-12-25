@@ -30,7 +30,7 @@ public abstract class BaseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(getLayoutId(), container, false);
-        initView(savedInstanceState);
+        createViewComplete();
         return mRootView;
     }
 
@@ -40,10 +40,9 @@ public abstract class BaseFragment extends Fragment {
     protected abstract int getLayoutId();
 
     /**
-     * 说明：创建视图时的初始化操作均写在该方法
-     * 该方法将在onCreateView()方法中执行
+     * 该方法在onCreateView()方法结束时执行
      */
-    protected abstract void initView(Bundle savedInstanceState);
+    protected abstract void createViewComplete();
 
     /**
      * 获取控件对象

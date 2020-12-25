@@ -1,5 +1,11 @@
 package com.my.smartplanner.activity;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,17 +13,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.Toast;
-
 import com.my.smartplanner.DatabaseHelper.TomatoDBHelper;
+import com.my.smartplanner.R;
 import com.my.smartplanner.adapter.TomatoHistoryItemAdapter;
 import com.my.smartplanner.item.TomatoHistoryListItem;
-import com.my.smartplanner.R;
 import com.my.smartplanner.util.DBUtil;
 
 import java.lang.ref.WeakReference;
@@ -55,7 +54,7 @@ public class TomatoHistoryActivity extends AppCompatActivity {
      */
     private void fillList() {
         SQLiteDatabase db = TomatoDBHelper.getWDB(this);
-        Cursor cursor = db.rawQuery("SELECT * FROM TomatoHistory", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM TomatoHistory ORDER BY start_time DESC", null);
         if (cursor.moveToFirst()) {
             do {
                 String title = DBUtil.getStringByName(cursor, TomatoDBHelper.TITLE_COL);
@@ -89,7 +88,6 @@ public class TomatoHistoryActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            //Toast.makeText(weakActivity.get(), "开始加载", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -126,8 +124,6 @@ public class TomatoHistoryActivity extends AppCompatActivity {
         findViews();
         toolbarSetting();
         new LoadTask(this).execute();
-        //fillList();
-        //recyclerViewSetting();
     }
 
     /**

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--颜色资源-->
+<?xml version="1.0" encoding="utf-8"?><!--颜色资源-->
 <resources>
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#3948a3</color>
@@ -18,4 +17,18 @@
     <color name="work_tomato_color">#ff5722</color>
     <color name="rest_tomato_color">#6cb100</color>
     <color name="count_tomato_color">#3f51b5</color>
+    <color name="tomato_history_morning">#4ea1cd</color>
+    <color name="tomato_history_afternoon">#cdb949</color>
+    <color name="tomato_history_night">#223a68</color>
+    <color name="tomato_history_unsuccessful">#D81B60</color>
+    <color name="tomato_history_text_trans">#B3FFFFFF</color>
+    <color name="tomato_ongoing_dark_bg">#202125</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="hint_text_trans_dark">#B3FFFFFF</color>
+    <!--mx's color-->
+    <color name="color_gray">#BED9EB</color>
+    <color name="color_blue">#005FEE</color>
+    <color name="color_green">#85E0BC</color>
+    <color name="color_white">#FFFFFF</color>
+    <color name="health_background">#33D6FF</color>
 </resources>

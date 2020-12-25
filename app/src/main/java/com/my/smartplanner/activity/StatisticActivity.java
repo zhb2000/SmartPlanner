@@ -1,21 +1,21 @@
 package com.my.smartplanner.activity;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-
 import com.my.smartplanner.R;
 
 /**
  * 统计页面的Activity
- * */
+ */
 public class StatisticActivity extends AppCompatActivity {
 
     @Override
@@ -36,7 +36,17 @@ public class StatisticActivity extends AppCompatActivity {
         healthCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(StatisticActivity.this,StepStatisticActivity.class);
+                //Intent intent = new Intent(StatisticActivity.this,StepStatisticActivity.class);
+                Intent intent = new Intent(StatisticActivity.this, HealthActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        CardView healthCard2 = findViewById(R.id.statistic_health_card2);
+        healthCard2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StatisticActivity.this, ChartActivity.class);
                 startActivity(intent);
             }
         });
@@ -44,16 +54,13 @@ public class StatisticActivity extends AppCompatActivity {
 
 
     /**
-     * 菜单选中事件
+     * 菜单选中事件：返回的箭头
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home://点击返回的箭头
-                finish();
-                break;
-            default:
-                break;
+        if (item.getItemId() == android.R.id.home) {
+            //点击返回的箭头
+            finish();
         }
         return true;
     }
